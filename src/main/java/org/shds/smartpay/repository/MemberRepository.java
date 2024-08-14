@@ -1,4 +1,8 @@
 package org.shds.smartpay.repository;
 
-public class MemberRepository {
+import org.shds.smartpay.entity.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MemberRepository extends JpaRepository<Member, String> {
+
 }

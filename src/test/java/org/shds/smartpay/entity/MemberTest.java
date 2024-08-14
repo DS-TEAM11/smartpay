@@ -1,12 +1,45 @@
 package org.shds.smartpay.entity;
 
 import org.junit.jupiter.api.Test;
+import org.shds.smartpay.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class MemberTest {
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Test
+    public void testFindMemberById() {
+        // 더미 데이터 저장 (다시 저장할 필요 없으나 테스트의 독립성을 위해 포함)
+        Member member = Member.builder()
+                .memberNo("M001")
+                .email("user@example.com")
+                .pwd("password123")
+                .name("John Doe")
+                .phone("010-1234-5678")
+                .fromSocial(false)
+                .regUser("testUser")
+                .payPwd("paypwd123")
+                .build();
+
+        memberRepository.save(member);
+
+        // 저장된 데이터 조회
+        Optional<Member> retrievedMember = memberRepository.findById("M001");
+
+        // 검증
+        assertThat(retrievedMember.isPresent()).isTrue();
+        assertThat(retrievedMember.get().getEmail()).isEqualTo("user@example.com");
+        assertThat(retrievedMember.get().getName()).isEqualTo("John Doe");
+        assertThat(retrievedMember.get().getRegUser()).isEqualTo("testUser");
+    }
+
     @Test
     public void testMemberCreationWithDefaultRegUser() {
         // 기본값인 "developer"를 사용하는 경우
