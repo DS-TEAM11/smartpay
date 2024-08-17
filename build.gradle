@@ -46,6 +46,11 @@ dependencies {
             "jakarta.annotation:jakarta.annotation-api",
             'com.querydsl:querydsl-apt:5.1.0:jakarta'
     )
+    // QR관련 dependency
+    implementation 'com.google.zxing:core:3.5.3'
+    implementation 'com.google.zxing:javase:3.5.3'
+    // websocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket:3.3.2'
 }
 
 tasks.named('test') {
