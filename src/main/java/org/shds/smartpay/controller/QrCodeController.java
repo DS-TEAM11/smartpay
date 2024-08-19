@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream;
 @RestController
 @RequestMapping("/qr")
 @Log4j2
-@CrossOrigin(origins = "http://192.168.45.137:3000") // React 애플리케이션의 URL
+@CrossOrigin(origins = "http://192.168.0.30:3000") // React 애플리케이션의 URL
 public class QrCodeController {
 
     /**
@@ -28,7 +28,7 @@ public class QrCodeController {
     @GetMapping("/seller")
     public ResponseEntity<byte[]> sendSeller() throws Exception{
 
-        String url = "http://192.168.45.137:3000/seller";
+        String url = "http://192.168.0.30:3000/seller";
 
         BitMatrix encode = new MultiFormatWriter()
                 .encode(url, BarcodeFormat.QR_CODE, 200, 200);
