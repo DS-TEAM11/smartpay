@@ -49,5 +49,5 @@ public class PayInfo extends BaseEntity {
     private Integer franchiseNo;
 
     @Column(name = "member_no")
-    private String memberNo;
+        private String memberNo;
 }
