@@ -2,9 +2,14 @@ package org.shds.smartpay.entity;
 
 import org.junit.jupiter.api.Test;
 import org.shds.smartpay.repository.MemberRepository;
+import org.shds.smartpay.security.dto.MemberRegisterDTO;
+import org.shds.smartpay.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,6 +18,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemberTest {
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private MemberService memberService;
+
+    private MemberRegisterDTO registerDTO;
+
+    // 역할을 나타내는 "ROLE_USER"를 authorities로 설정
+    Collection<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+
+
+    @Test
+    public void insertTestId() throws Exception {
+        registerDTO = new MemberRegisterDTO("test@test.com","test1234","01012341234", "테스트맨",authorities);
+        memberService.registerNewMember(registerDTO);
+    }
 
     @Test
     public void testFindMemberById() {
@@ -20,7 +39,7 @@ class MemberTest {
         Member member = Member.builder()
                 .memberNo("M001")
                 .email("user@example.com")
-                .pwd("password123")
+                .password("password123")
                 .name("John Doe")
                 .phone("010-1234-5678")
                 .fromSocial(false)
@@ -46,7 +65,7 @@ class MemberTest {
         Member memberWithDefaultUser = Member.builder()
                 .memberNo("M001")
                 .email("user1@example.com")
-                .pwd("password123")
+                .password("password123")
                 .name("John Doe")
                 .phone("010-1234-5678")
                 .fromSocial(false)
@@ -67,7 +86,7 @@ class MemberTest {
         Member memberWithCustomUser = Member.builder()
                 .memberNo("M002")
                 .email("user2@example.com")
-                .pwd("password456")
+                .password("password456")
                 .name("Jane Smith")
                 .phone("010-9876-5432")
                 .fromSocial(true)
