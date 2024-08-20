@@ -13,6 +13,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.shds.smartpay.entity.Member;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -87,6 +88,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .bodyValue(payDTO)//데이터 전송
                 .retrieve()  // 서버로 전송해서 응답 받아옴
                 .bodyToMono(Integer.class)  // 타입변환
+                .publishOn(Schedulers.boundedElastic())  // 타입변환
                 .map(paymentStatus -> {
                     thirdSaveHistory(payInfoDTO, paymentStatus);
                     return paymentStatus;
