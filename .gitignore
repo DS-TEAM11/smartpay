@@ -38,3 +38,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Login Test Files ###
+src/main/resources/templates/member/
+src/main/resources/templates/login.html
