@@ -38,7 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .isAi(payInfoDTO.isGetIsAi())
                 .gptState(0)  // 아직 AI 로직 돌기 전
                 .payDate(payInfoDTO.getPayDate())
-                .franchiseNo(payInfoDTO.getFranchiseNo())
+                .franchiseCode(payInfoDTO.getFranchiseCode())
                 .memberNo(payInfoDTO.getMemberNo())
                 .build();
         payHistoryRepository.save(history);
@@ -59,7 +59,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .payDate(payInfoDTO.getPayDate())
                 .saveType(payInfoDTO.getSaveType())
                 .savePrice(payInfoDTO.getSaveType())
-                .franchiseNo(payInfoDTO.getFranchiseNo())
+                .franchiseCode(payInfoDTO.getFranchiseCode())
                 .memberNo(payInfoDTO.getMemberNo())
                 .build();
         payHistoryRepository.save(history);
@@ -77,7 +77,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .price(payInfoDTO.getPrice())
                 .product(payInfoDTO.getProduct())
                 .payDate(payInfoDTO.getPayDate())
-                .franchiseNo(payInfoDTO.getFranchiseNo())
+                .franchiseCode(payInfoDTO.getFranchiseCode())
                 .requestName(memberName)
                 .build();
 
@@ -116,7 +116,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .payDate(payInfoDTO.getPayDate())
                 .saveType(payInfoDTO.getSaveType())
                 .savePrice(payInfoDTO.getSaveType())
-                .franchiseNo(payInfoDTO.getFranchiseNo())
+                .franchiseCode(payInfoDTO.getFranchiseCode())
                 .memberNo(payInfoDTO.getMemberNo())
                 .approval(approval)
                 .build();

@@ -2,11 +2,9 @@ package org.shds.smartpay.controller;
 
 import org.shds.smartpay.dto.BinTableDTO;
 import org.shds.smartpay.dto.CardDTO;
-import org.shds.smartpay.entity.BinTable;
 import org.shds.smartpay.entity.Card;
 import org.shds.smartpay.entity.CardInfo;
-import org.shds.smartpay.repository.BinTableRepository;
-import org.shds.smartpay.repository.CardRespository;
+import org.shds.smartpay.repository.CardRepository;
 import org.shds.smartpay.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +18,11 @@ import java.util.Optional;
 @RequestMapping("/api/cards")
 public class CardController {
 
-    // @Autowired
-    // private PasswordEncoder passwordEncoder;
+     @Autowired
+     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private CardRespository cardRepository;
+    private CardRepository cardRepository;
 
     @Autowired
     private CardService cardService;
@@ -35,8 +33,8 @@ public class CardController {
     public ResponseEntity<Card> registerCard(@RequestBody CardDTO cardDTO) {
 
         // DTO에서 카드 비밀번호를 암호화
-        // String encodedPwd = passwordEncoder.encode(cardDTO.getCardPwd());
-        // cardDTO.setCardPwd(encodedPwd); // 암호화된 비밀번호를 DTO에 설정
+         String encodedPwd = passwordEncoder.encode(cardDTO.getCardPwd());
+         cardDTO.setCardPwd(encodedPwd); // 암호화된 비밀번호를 DTO에 설정
 
         // DTO를 엔티티로 변환
         Card card = convertToEntity(cardDTO);
