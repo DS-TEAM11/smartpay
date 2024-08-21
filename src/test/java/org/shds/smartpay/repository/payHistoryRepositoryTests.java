@@ -5,6 +5,7 @@ import org.shds.smartpay.entity.History;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
@@ -17,13 +18,13 @@ public class payHistoryRepositoryTests {
 
     @Test
     public void insertDummies() {
-        IntStream.rangeClosed(0, 10).forEach(i -> {
+        IntStream.rangeClosed(0, 5).forEach(i -> {
             History history = History.builder()
                     .orderNo(UUID.randomUUID().toString())
                     .product("test" + i)
-                    .price(10000)
+                    .price(152000)
                     .cardNo("1111-1111-1111-1111")
-                    .cardCode("13060013")
+                    .cardCode("13060051")
                     .isAi(true)
                     .gptState(1)
                     .approval(0)
@@ -41,9 +42,16 @@ public class payHistoryRepositoryTests {
     public void findPreviousSpendingByMemberNo() {
         String memberNo = "testuser";
         System.out.println("결과");
-        Map<String, Object> result = payHistoryRepository.findPreviousSpendingByMemberNo(memberNo);
-        for (String key : result.keySet()) {
-            System.out.println(key + ":" + result.get(key));
+        List<Map<String, Object>> result = payHistoryRepository.findPreviousSpendingByMemberNo(memberNo);
+
+        // 결과를 하나씩 출력
+        for (Map<String, Object> map : result) {
+            for (String key : map.keySet()) {
+                Object value = map.get(key);
+                System.out.println(key + ": " + value);
+            }
+            System.out.println("----");  // 각 Map의 끝을 구분하기 위한 구분선
         }
     }
+
 }

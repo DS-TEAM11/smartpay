@@ -10,10 +10,7 @@ import org.shds.smartpay.service.PaymentService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -28,13 +25,24 @@ public class PaymentController {
     private final ChatGptService chatGptService;
 
     @PostMapping("/ai")
-    public ResponseEntity<String> receivePaymentRequest(@RequestBody SellerDTO sellerDTO, @RequestBody String memberNo) {
-        try {
-            CardRecommendDTO recommendDTO = chatGptService.getCardBenefit(sellerDTO, memberNo);
-            return ResponseEntity.ok(recommendDTO.toString());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("추천 로직 실패");
+    public ResponseEntity<String> receivePaymentRequest(@RequestBody SellerDTO sellerDTO, @RequestParam String memberNo) {
+        System.out.println("####################################");
+        System.out.println(sellerDTO);
+        System.out.println(memberNo);
+        System.out.println("####################################");
+        CardRecommendDTO recommendDTO = chatGptService.getCardBenefit(sellerDTO, memberNo);
+        if(recommendDTO == null) {
+            return ResponseEntity.status(500).body("추천 카드 없음");
         }
+        return ResponseEntity.ok(recommendDTO.toString());
+
+//        try {
+//            CardRecommendDTO recommendDTO = chatGptService.getCardBenefit(sellerDTO, memberNo);
+//
+//            return ResponseEntity.ok(recommendDTO.toString());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).body("추천 로직 실패");
+//        }
     }
 
     @PostMapping("/request")
