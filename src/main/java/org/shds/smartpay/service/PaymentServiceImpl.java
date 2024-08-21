@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.shds.smartpay.dto.PayDTO;
 import org.shds.smartpay.dto.PayInfoDTO;
 import org.shds.smartpay.entity.History;
+import org.shds.smartpay.entity.PayInfo;
 import org.shds.smartpay.repository.MemberRepository;
 import org.shds.smartpay.repository.PayHistoryRepository;
 import org.shds.smartpay.repository.PayInfoRepository;
@@ -15,6 +16,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.shds.smartpay.entity.Member;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -121,5 +123,10 @@ public class PaymentServiceImpl implements PaymentService {
                 .approval(approval)
                 .build();
         payHistoryRepository.save(history);
+    }
+
+    @Override
+    public List<PayInfo> getPayInfosByMemberNo(String memberNo) {
+        return payInfoRepository.findByMemberNoOrderByPayDateDesc(memberNo);
     }
 }

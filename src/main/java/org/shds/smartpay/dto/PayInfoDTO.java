@@ -21,4 +21,5 @@ public class PayInfoDTO {
     private Integer saveType;
     private Integer franchiseNo;
     private String memberNo;
+    private String cardImg;
 }
