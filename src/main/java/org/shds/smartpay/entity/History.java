@@ -25,7 +25,7 @@ public class History {
     private Integer price;
 
     private String cardNo;
-    private Integer cardCode;
+    private String cardCode;
 
     private boolean isAi;
     private Integer gptState;
@@ -36,7 +36,7 @@ public class History {
 
     private Integer savePrice;
     private Integer saveType;
-    private Integer franchiseNo;
+    private String franchiseCode;
     private String memberNo;
 
 }

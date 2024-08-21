@@ -2,8 +2,13 @@ package org.shds.smartpay.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.shds.smartpay.dto.CardRecommendDTO;
 import org.shds.smartpay.dto.PayInfoDTO;
+import org.shds.smartpay.dto.SellerDTO;
+import org.shds.smartpay.service.ChatGptService;
 import org.shds.smartpay.service.PaymentService;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,19 +24,16 @@ import static net.minidev.json.JSONValue.isValidJson;
 @Log4j2
 @RequiredArgsConstructor
 public class PaymentController {
-
     private final PaymentService paymentService;
-
+    private final ChatGptService chatGptService;
 
     @PostMapping("/ai")
-    public ResponseEntity<String> receivePaymentRequest(@RequestBody PayInfoDTO payInfoDTO) {
+    public ResponseEntity<String> receivePaymentRequest(@RequestBody SellerDTO sellerDTO, @RequestBody String memberNo) {
         try {
-            paymentService.firstSaveHistory(payInfoDTO);
-            //AI로직 돌기(결제 정보에 따른 카드 추천)
-            //사용자에게 카드 추천 전송해야 함
-            return ResponseEntity.ok("First payment request success");
+            CardRecommendDTO recommendDTO = chatGptService.getCardBenefit(sellerDTO, memberNo);
+            return ResponseEntity.ok(recommendDTO.toString());
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error first payment request.");
+            return ResponseEntity.status(500).body("추천 로직 실패");
         }
     }
 
@@ -53,3 +55,4 @@ public class PaymentController {
 
 
 }
+
