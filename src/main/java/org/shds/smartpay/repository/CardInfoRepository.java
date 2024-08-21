@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 
-public interface CardInfoRespository extends JpaRepository<CardInfo, String> {
+public interface CardInfoRepository extends JpaRepository<CardInfo, String> {
 
     // cardCompany로 CardInfo 목록을 가져오는 메서드
     List<CardInfo> findByCardCompany(String cardCompany);

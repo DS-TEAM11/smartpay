@@ -14,12 +14,12 @@ public class PayInfoDTO {
     private String product;
     private Integer price;
     private String cardNo;
-    private Integer cardCode;
+    private String cardCode;
     private boolean getIsAi;
     private String payDate;
     private Integer savePrice;
     private Integer saveType;
-    private Integer franchiseNo;
+    private String franchiseCode;
     private String memberNo;
     private String cardImg;
 }
