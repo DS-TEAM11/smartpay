@@ -31,6 +31,8 @@ public class CardDTO {
 
     private String memberNo;  // 회원 번호
 
+    private String cardImage; //카드이미지
+
 
 
 }
