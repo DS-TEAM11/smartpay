@@ -55,7 +55,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers("/","/index.html","/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
-                    .requestMatchers("/member/signup", "/oauth2/sign-up", "/login").permitAll() // 특정 페이지 접근 허용
+                    .requestMatchers("/member/signup", "/oauth2/sign-up", "/login","/logout").permitAll() // 특정 페이지 접근 허용
                     //.anyRequest().authenticated(); // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
                     .requestMatchers("/member/jwt-test","/member/tetest").hasRole("USER")
                     .anyRequest().permitAll();
