@@ -23,6 +23,11 @@ public class MemberServiceImpl implements MemberService {
     private PasswordEncoder passwordEncoder;
 
     @Override
+    public Member findByEmail(String email){
+        return memberRepository.findByEmail(email).get();
+    }
+
+    @Override
     public Member registerNewMember(MemberRegisterDTO memberRegisterDTO) throws Exception {
         if (memberRepository.findByEmail(memberRegisterDTO.getEmail()).isPresent()){
             throw new Exception("이미 존재하는 이메일입니다.");
