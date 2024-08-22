@@ -78,7 +78,12 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
 
-        // 리다이렉트
-        response.sendRedirect("/login");
+        // 리다이렉트 기존코드
+        //response.sendRedirect("http://localhost:3000/Afterkakao");
+
+        // 리다이렉트 - 쿼리 파라미터에 토큰 포함
+        String redirectUrl = String.format("http://localhost:3000/Afterkakao?accessToken=%s&refreshToken=%s",
+                accessToken, refreshToken);
+        response.sendRedirect(redirectUrl);
     }
 }
