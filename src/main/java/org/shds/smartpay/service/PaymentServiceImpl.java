@@ -11,10 +11,12 @@ import org.shds.smartpay.repository.PayHistoryRepository;
 import org.shds.smartpay.repository.PayInfoRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.shds.smartpay.entity.Member;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -121,5 +123,10 @@ public class PaymentServiceImpl implements PaymentService {
                 .approval(approval)
                 .build();
         payHistoryRepository.save(history);
+    }
+
+    @Override
+    public List<Object[]> cardRankList(@RequestParam String category) {
+        return payHistoryRepository.getCardRankList(category);
     }
 }

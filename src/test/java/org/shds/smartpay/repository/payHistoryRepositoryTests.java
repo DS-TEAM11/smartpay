@@ -5,6 +5,7 @@ import org.shds.smartpay.entity.History;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -16,6 +17,13 @@ public class payHistoryRepositoryTests {
     @Autowired
     private PayHistoryRepository payHistoryRepository;
 
+    @Test
+    public void testRankList(){
+        List<Object[]> result = payHistoryRepository.getCardRankList("전체");
+        for (Object[] objects : result) {
+            System.out.println(Arrays.toString(objects));
+        }
+    }
     @Test
     public void insertDummies() {
         IntStream.rangeClosed(0, 5).forEach(i -> {
