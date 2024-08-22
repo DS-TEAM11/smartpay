@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Seller Information</title>
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>-->
+<!--    <script>-->
+<!--        $(document).ready(function () {-->
+<!--            // 페이지 로드 시 orderId 값 가져오기-->
+<!--            let orderId = /*[[${orderId}]]*/ '';-->
+
+<!--            // 주문하기-->
+<!--            function messageSend() {-->
+<!--                let socket = new SockJS("/ws");-->
+<!--                let stompClient = Stomp.over(socket);-->
+
+<!--                stompClient.connect({}, function () {-->
+<!--                    const message = {-->
+<!--                        message: "결제 요청이 들어왔습니다"-->
+<!--                    };-->
+
+<!--                    // 메시지 전송-->
+<!--                    stompClient.send("/pub/order-complete-message/" + orderId, {}, JSON.stringify(message));-->
+
+<!--                    // 연결 종료 (지연 후)-->
+<!--                    setTimeout(function() {-->
+<!--                        stompClient.disconnect();-->
+<!--                    }, 1000);-->
+<!--                });-->
+<!--            }-->
+<!--        });-->
+<!--    </script>-->
+<body>
+    <form action="/payment/orderAccept" method="post">
+        가맹점 분류:
+        <select name="franchiseNo">
+            <option value="10000" selected>일반 가맹점</option>
+            <option value="10001">공과금</option>
+            <option value="10002">주유</option>
+            <option value="10003">편의점</option>
+            <option value="10004">카페</option>
+            <option value="10005">마트</option>
+            <option value="10006">쇼핑</option>
+            <option value="10007">항공</option>
+            <option value="10008">음식점</option>
+            <option value="10009">대중교통</option>
+        </select> <br>
+        <input type="hidden" name="email" th:text="${email}">
+        <input type="hidden" name="email" th:value="${email}">
+        <input type="hidden" name="orderId" th:text="${orderId}">
+        <input type="hidden" name="orderId" th:value="${orderId}">
+        <input type="button" onclick="messageSend()">결제 요청</input>
+    </form>
+</body>
+</html>
