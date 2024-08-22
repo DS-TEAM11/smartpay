@@ -80,7 +80,7 @@ public class JwtService {
     public void sendAccessToken(HttpServletResponse response, String accessToken) {
         response.setStatus(HttpServletResponse.SC_OK);
 
-        response.setHeader(accessHeader, "Bearer "+accessToken);
+        response.setHeader(accessHeader, BEARER+accessToken);
         log.info("재발급된 Access Token : {}", accessToken);
     }
 
@@ -91,8 +91,8 @@ public class JwtService {
         try {
             response.setStatus(HttpServletResponse.SC_OK);
 
-            setAccessTokenHeader(response, "Bearer " + accessToken);
-            setRefreshTokenHeader(response, "Bearer " + refreshToken);
+            setAccessTokenHeader(response, accessToken);
+            setRefreshTokenHeader(response, refreshToken);
             response.getWriter().println("OK");
             log.info("Access Token, Refresh Token 헤더 설정 완료");
         } catch (Exception e) {e.printStackTrace();}
@@ -145,14 +145,14 @@ public class JwtService {
      * AccessToken 헤더에 설정
      */
     public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
-        response.setHeader(accessHeader, accessToken);
+        response.setHeader(accessHeader, BEARER+accessToken);
     }
 
     /**
      * RefreshToken 헤더에 설정
      */
     public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
-        response.setHeader(refreshHeader, refreshToken);
+        response.setHeader(refreshHeader, BEARER+refreshToken);
     }
 
     /**
