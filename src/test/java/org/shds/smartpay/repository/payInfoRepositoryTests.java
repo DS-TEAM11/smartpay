@@ -102,4 +102,10 @@ public class payInfoRepositoryTests {
         System.out.println(payInfos);
         System.out.println("---------------------------");
     }
+
+    @Test
+    public void test(){
+        PayInfo payinfo = payInfoRepository.findByOrderNo("pay_info 테이블 저장");
+        System.out.println(payinfo);
+    }
 }

@@ -17,8 +17,12 @@ public interface PaymentService {
 
     void thirdSaveHistory(PayInfoDTO payInfoDTO, int approval);
 
+    void paymentcompleted(PayInfoDTO payInfoDTO);
 
     List<Object[]> cardRankList(@RequestParam String category);
+
+    PayInfo getPayInfo(@RequestParam String orderNo);
+
     /**
      * 특정 memberNo에 해당하는 PayInfo 목록을 payDate 기준으로 내림차순으로 반환합니다.
      *

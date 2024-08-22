@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 @Log4j2
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
+
     private final MemberRepository memberRepository;
     private final PayHistoryRepository payHistoryRepository;
     private final PayInfoRepository payInfoRepository;
@@ -42,6 +43,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .isAi(payInfoDTO.isGetIsAi())
                 .gptState(0)  // 아직 AI 로직 돌기 전
                 .payDate(payInfoDTO.getPayDate())
+                .franchiseName(payInfoDTO.getFranchiseName())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
                 .memberNo(payInfoDTO.getMemberNo())
                 .build();
@@ -63,6 +65,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .payDate(payInfoDTO.getPayDate())
                 .saveType(payInfoDTO.getSaveType())
                 .savePrice(payInfoDTO.getSaveType())
+                .franchiseName(payInfoDTO.getFranchiseName())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
                 .memberNo(payInfoDTO.getMemberNo())
                 .build();
@@ -81,6 +84,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .price(payInfoDTO.getPrice())
                 .product(payInfoDTO.getProduct())
                 .payDate(payInfoDTO.getPayDate())
+                .franchiseName(payInfoDTO.getFranchiseName())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
                 .requestName(memberName)
                 .build();
@@ -92,9 +96,9 @@ public class PaymentServiceImpl implements PaymentService {
                 .bodyValue(payDTO)//데이터 전송
                 .retrieve()  // 서버로 전송해서 응답 받아옴
                 .bodyToMono(Integer.class)  // 타입변환
-                .publishOn(Schedulers.boundedElastic())  // 타입변환
                 .map(paymentStatus -> {
-                    thirdSaveHistory(payInfoDTO, paymentStatus);
+                    thirdSaveHistory(payInfoDTO, paymentStatus);  //세번째 결제로그 저장
+                    if(paymentStatus == 0) paymentcompleted(payInfoDTO); //결제 승인이면 pay_info 테이블 결제승인 건 저장
                     return paymentStatus;
                 })
                 .toFuture(); // CompletableFuture로 변환
@@ -106,7 +110,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional
     @Override
-    public void thirdSaveHistory(PayInfoDTO payInfoDTO, int approval) {
+    public void thirdSaveHistory(PayInfoDTO payInfoDTO, int approval) throws DataAccessException {
 
         // 세번째 결제 로그 저장
         History history = History.builder()
@@ -120,11 +124,31 @@ public class PaymentServiceImpl implements PaymentService {
                 .payDate(payInfoDTO.getPayDate())
                 .saveType(payInfoDTO.getSaveType())
                 .savePrice(payInfoDTO.getSaveType())
-                .franchiseCode(payInfoDTO.getFranchiseCode())
+                .franchiseName(payInfoDTO.getFranchiseName())
                 .memberNo(payInfoDTO.getMemberNo())
                 .approval(approval)
                 .build();
         payHistoryRepository.save(history);
+    }
+
+    //결제 승인 정보 pay_info 테이블 저장
+    @Override
+    public void paymentcompleted(PayInfoDTO payInfoDTO) throws DataAccessException  {
+        PayInfo info = PayInfo.builder()
+                .orderNo(payInfoDTO.getOrderNo())
+                .product(payInfoDTO.getProduct())
+                .price(payInfoDTO.getPrice())
+                .cardNo(payInfoDTO.getCardNo())
+                .cardCode(payInfoDTO.getCardCode())
+                .payDate(payInfoDTO.getPayDate())
+                .saveType(payInfoDTO.getSaveType())
+                .savePrice(payInfoDTO.getSaveType())
+                .franchiseName(payInfoDTO.getFranchiseName())
+                .franchiseCode(payInfoDTO.getFranchiseCode())
+                .isAi(payInfoDTO.isGetIsAi())
+                .memberNo(payInfoDTO.getMemberNo())
+                .build();
+        payInfoRepository.save(info);
     }
 
     @Override
@@ -192,8 +216,15 @@ public class PaymentServiceImpl implements PaymentService {
         return payInfos;
     }
 
+    //카테고리에 따른 랭크
     @Override
     public List<Object[]> cardRankList(@RequestParam String category) {
         return payHistoryRepository.getCardRankList(category);
+    }
+
+    //주문번호에 대한 결제 완료건 가져오기
+    @Override
+    public PayInfo getPayInfo(String orderNo) {
+        return payInfoRepository.findByOrderNo(orderNo);
     }
 }

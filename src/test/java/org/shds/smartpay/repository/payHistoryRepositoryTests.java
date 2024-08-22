@@ -39,7 +39,7 @@ public class payHistoryRepositoryTests {
                     .payDate("20240701")
                     .savePrice(100)
                     .saveType(0)
-                    .franchiseCode("10003")
+                    .franchiseName("10003")
                     .memberNo("testuser")
                     .build();
             System.out.println(payHistoryRepository.save(history));

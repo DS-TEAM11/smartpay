@@ -21,33 +21,24 @@ public class PayInfo extends BaseEntity {
     @Id
     private String orderNo;
 
-    @Column(name="product")
     private String product;
 
-    @Column(name = "price")
     private Integer price;
 
-    @Column(name = "card_no")
     private String cardNo;
 
-    @Column(name ="card_code")
     private String cardCode;
 
-    @Column(name = "is_ai")
     private Boolean isAi;
 
-    @Column(name = "pay_date")
     private String payDate;
 
-    @Column(name = "save_price")
     private Integer savePrice;
 
-    @Column(name = "save_type")
     private Integer saveType;
 
-    @Column(name = "franchise_code")
     private String franchiseCode;
+    private String franchiseName;
 
-    @Column(name = "member_no")
         private String memberNo;
 }

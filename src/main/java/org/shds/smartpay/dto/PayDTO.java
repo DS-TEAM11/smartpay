@@ -14,6 +14,7 @@ public class PayDTO {
     private Integer price;
     private String cardNo;
     private String payDate;
+    private String franchiseName;
     private String franchiseCode;
     private String requestName;
 }

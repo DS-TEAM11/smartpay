@@ -14,7 +14,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // 채팅방 Topic -> ws
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("*");
+                .setAllowedOrigins("http://localhost:3000");
     }
 
     @Override

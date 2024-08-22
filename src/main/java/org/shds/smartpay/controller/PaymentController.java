@@ -5,11 +5,9 @@ import lombok.extern.log4j.Log4j2;
 import org.shds.smartpay.dto.CardRecommendDTO;
 import org.shds.smartpay.dto.PayInfoDTO;
 import org.shds.smartpay.dto.SellerDTO;
+import org.shds.smartpay.entity.PayInfo;
 import org.shds.smartpay.service.ChatGptService;
 import org.shds.smartpay.service.PaymentService;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,13 +56,18 @@ public class PaymentController {
                 .exceptionally(ex -> {
                     log.error("Error occurred", ex);
                     return -1;
-//                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
                 });
     }
 
     @GetMapping("/ranking")
     public ResponseEntity<List<Object[]>> getCardRankList(@RequestParam String category){
         return ResponseEntity.ok(paymentService.cardRankList(category));
+    }
+
+    //주문번호가 보여도 괜찮나...?
+    @PostMapping("/completed")
+    public ResponseEntity<PayInfo> completePayment(@RequestParam String orderNo) {
+        return ResponseEntity.ok(paymentService.getPayInfo(orderNo));
     }
 
 
