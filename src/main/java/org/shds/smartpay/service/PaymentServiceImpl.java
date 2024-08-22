@@ -17,10 +17,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -192,5 +190,10 @@ public class PaymentServiceImpl implements PaymentService {
 
 
         return payInfos;
+    }
+
+    @Override
+    public List<Object[]> cardRankList(@RequestParam String category) {
+        return payHistoryRepository.getCardRankList(category);
     }
 }
