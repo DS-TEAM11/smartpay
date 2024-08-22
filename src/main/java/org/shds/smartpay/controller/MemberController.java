@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,17 @@ public class MemberController {
         Member registeredMember = memberService.registerNewMember(memberRegisterDTO);
         log.info("registerMember 진입");
         return ResponseEntity.ok(registeredMember);
+    }
+
+    @GetMapping("/findMember")
+    public ResponseEntity<String> findMemberNo(@AuthenticationPrincipal UserDetails userDetails) {
+        String email = userDetails.getUsername();  // JWT에서 이메일(사용자 이름)을 가져옴
+        Member member = memberService.findByEmail(email);
+        if (member != null) {
+            return ResponseEntity.ok(String.valueOf(member.getMemberNo()));  // memberNo 반환
+        } else {
+            return ResponseEntity.notFound().build();  // 해당 사용자가 없는 경우 404 응답
+        }
     }
 
     @GetMapping("/jwt-test")

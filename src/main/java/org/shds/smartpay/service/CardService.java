@@ -1,6 +1,7 @@
 package org.shds.smartpay.service;
 
 import org.shds.smartpay.dto.BinTableDTO;
+import org.shds.smartpay.entity.Card;
 import org.shds.smartpay.entity.CardInfo;
 
 
@@ -12,4 +13,9 @@ public interface CardService {
 
     // 추가된 메서드: cardCompany로 카드 목록을 가져옴
     List<CardInfo> getCardsByCompany(String cardCompany);
+
+    //memberNo로 카드 목록을 가져옴
+    List<Card> getCardsByMemberNo(String memberNo);
+
+
 }

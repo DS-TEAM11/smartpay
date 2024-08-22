@@ -29,7 +29,9 @@ public class CardDTO {
 
     private String cardCode;  // 카드 코드
 
-    private int memberNo;  // 회원 번호
+    private String memberNo;  // 회원 번호
+
+    private String cardImage; //카드이미지
 
 
 

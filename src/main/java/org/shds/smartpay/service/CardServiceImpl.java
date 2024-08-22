@@ -2,9 +2,11 @@ package org.shds.smartpay.service;
 
 import org.shds.smartpay.dto.BinTableDTO;
 import org.shds.smartpay.entity.BinTable;
+import org.shds.smartpay.entity.Card;
 import org.shds.smartpay.entity.CardInfo;
 import org.shds.smartpay.repository.BinTableRepository;
-import org.shds.smartpay.repository.CardInfoRespository;
+import org.shds.smartpay.repository.CardInfoRepository;
+import org.shds.smartpay.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +20,10 @@ public class CardServiceImpl implements CardService {
     private BinTableRepository binTableRepository;
 
     @Autowired
-    private CardInfoRespository cardInfoRespository;
+    private CardInfoRepository cardInfoRepository;
+
+    @Autowired
+    private CardRepository cardRepository;
 
 
     @Override
@@ -46,6 +51,11 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public List<CardInfo> getCardsByCompany(String cardCompany) {
-        return cardInfoRespository.findByCardCompany(cardCompany);
+        return cardInfoRepository.findByCardCompany(cardCompany);
+    }
+
+    @Override
+    public List<Card> getCardsByMemberNo(String memberNo) {
+        return cardRepository.findByMemberNo(memberNo);
     }
 }

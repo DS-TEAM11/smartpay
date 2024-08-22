@@ -26,6 +26,9 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -45,11 +48,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable());
 
-        http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
+//        http.headers(headers -> headers.httpStrictTransportSecurity(s->{}).disable());
+
+        // CORS 설정 추가
+        http.cors(cors -> cors.disable());
 
         http.authorizeHttpRequests(auth -> {
             auth.requestMatchers("/","/index.html","/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
-                    .requestMatchers("/member/signup", "/oauth2/sign-up", "/login").permitAll() // 특정 페이지 접근 허용
+                    .requestMatchers("/member/signup", "/oauth2/sign-up", "/login","/logout", "/api/payment/done").permitAll() // 특정 페이지 접근 허용
                     //.anyRequest().authenticated(); // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
                     .requestMatchers("/member/jwt-test","/member/tetest").hasRole("USER")
                     .anyRequest().permitAll();
@@ -88,6 +94,37 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.addAllowedOrigin("http://localhost:3000"); // React 앱의 주소
+//        configuration.addAllowedMethod("*");
+//        configuration.addAllowedHeader("*");
+//        configuration.setAllowCredentials(true);
+//        configuration.addExposedHeader("Authorization");  // 헤더 노출 설정
+//        configuration.addExposedHeader("Authorization-Refresh");  // 헤더 노출 설정
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
+
+    // CORS 설정을 위한 Bean 정의
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.addAllowedOrigin("http://localhost:3000"); // React 앱의 주소
+//        configuration.addAllowedMethod("*");
+//        configuration.addAllowedHeader("*");
+//        configuration.setAllowCredentials(true);
+//        configuration.addExposedHeader("Authorization");  // 헤더 노출 설정
+//        configuration.addExposedHeader("Authorization-Refresh");  // 헤더 노출 설정
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

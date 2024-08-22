@@ -40,9 +40,9 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:3.3.2'
-    //implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-    //implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
-    //implementation 'io.jsonwebtoken:jjwt-gson:0.12.6'
+//    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+//    implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
+//    implementation 'io.jsonwebtoken:jjwt-gson:0.12.6'
     implementation 'com.auth0:java-jwt:4.2.1'
     implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
 
@@ -56,6 +56,15 @@ dependencies {
             "jakarta.annotation:jakarta.annotation-api",
             'com.querydsl:querydsl-apt:5.1.0:jakarta'
     )
+    // QR관련 dependency
+    implementation 'com.google.zxing:core:3.5.3'
+    implementation 'com.google.zxing:javase:3.5.3'
+    // websocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket:3.3.2'
+    // sockjs
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    // stomp
+    implementation 'org.webjars:stomp-websocket:2.3.4'
 }
 
 tasks.named('test') {
