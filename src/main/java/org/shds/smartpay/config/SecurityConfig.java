@@ -64,7 +64,7 @@ public class SecurityConfig {
         });
 
         // 세션을 사용하지 않도록 설정
-//        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         // OAuth2 로그인 설정
         http.oauth2Login(oauth2 -> oauth2
