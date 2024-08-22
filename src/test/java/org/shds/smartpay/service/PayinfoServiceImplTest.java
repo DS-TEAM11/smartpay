@@ -31,13 +31,14 @@ public class PayinfoServiceImplTest {
     public void findByDateOrderByPayDate() {
 
         String payDate = "20240814";
-        String memberNo = "UUID1";
-        String codeNo = "1111-1111-1111-1111";
+        String memberNo = "dd7ae501-0bbe-41d0-b4b7-c3cbded39a2a";
+        String cardNo = null;
+//        String codeNo = "1111-1111-1111-1111";
 
         List<PayInfoDTO> result = paymentService.findByDateOrderByPayDate(
             payDate
             , memberNo
-            , codeNo
+            , cardNo
         );
 
         System.out.println("---------------------------");

@@ -159,6 +159,9 @@ public class PaymentServiceImpl implements PaymentService {
             Optional<Card> cardOptional = cardRepository.findByCardNo(cardNo);
             cardOptional.ifPresent(cardList::add);
         }
+        System.out.println("###########################################");
+        System.out.println(cardList);
+        System.out.println("###########################################");
 
         // 지불일자가 있는 경우 해당 날짜 범위로 PayInfo 조회
         if (payDate != null) {
