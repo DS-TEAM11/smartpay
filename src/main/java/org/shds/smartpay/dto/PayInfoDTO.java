@@ -20,6 +20,7 @@ public class PayInfoDTO {
     private Integer savePrice;
     private Integer saveType;
     private String franchiseCode;
+    private String franchiseName;
     private String memberNo;
     private String cardImage;
 }
