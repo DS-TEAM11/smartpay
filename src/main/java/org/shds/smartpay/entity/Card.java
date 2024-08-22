@@ -30,4 +30,6 @@ public class Card extends BaseEntity {
     private String cardCode;  // 카드 코드
 
     private String memberNo;  // 회원 번호
+
+    private String cardImage;
 }

@@ -10,8 +10,4 @@ public interface CardInfoRepository extends JpaRepository<CardInfo, String> {
 
     // cardCompany로 CardInfo 목록을 가져오는 메서드
     List<CardInfo> findByCardCompany(String cardCompany);
-
-
-
-
 }

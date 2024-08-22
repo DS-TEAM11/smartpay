@@ -15,7 +15,7 @@ public class PayinfoServiceImplTest {
     private PaymentService paymentService;
 
     @Test
-    public void testGetPayInfosByMemberNo() {
+    public void GetPayInfosByMemberNoTest() {
 
         String memberNo = "UUID1";
 
@@ -24,5 +24,17 @@ public class PayinfoServiceImplTest {
         System.out.println("--------------------------");
         System.out.println(result);
         System.out.println("--------------------------");
+    }
+
+    @Test
+    public void findByDateOrderByPayDate() {
+
+        String payDate = "20240814";
+
+        List<PayInfo> result = paymentService.findByDateOrderByPayDate(payDate);
+
+        System.out.println("---------------------------");
+        System.out.println(result);
+        System.out.println("---------------------------");
     }
 }
