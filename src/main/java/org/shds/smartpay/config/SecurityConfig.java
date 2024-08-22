@@ -58,8 +58,8 @@ public class SecurityConfig {
                     .requestMatchers("/member/signup", "/oauth2/sign-up", "/login","/logout").permitAll() // 특정 페이지 접근 허용
                     //.anyRequest().authenticated(); // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
                     .requestMatchers("/member/jwt-test","/member/tetest").hasRole("USER")
-                    //.anyRequest().permitAll();
-                    .anyRequest().authenticated();
+                    .anyRequest().permitAll();
+                    //.anyRequest().authenticated();
 
         });
 
