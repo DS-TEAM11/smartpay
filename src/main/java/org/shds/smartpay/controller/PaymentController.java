@@ -9,6 +9,7 @@ import org.shds.smartpay.service.CardService;
 import org.shds.smartpay.service.ChatGptService;
 import org.shds.smartpay.service.PaymentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,14 +27,23 @@ public class PaymentController {
     private final ChatGptService chatGptService;
     private final CardService cardService;
 
+    //첫번쨰 결제 로그 저장
+    //(들어와야 하는 값: product, price, cardCode, isAi, gptState, payDate, franchiseName, franchiseCode, memberNo
+    @PostMapping("/pay")
+    public ResponseEntity<String> firstSavPayment(@RequestBody PayInfoDTO payInfoDTO) {
+        String orderNo = paymentService.firstSaveHistory(payInfoDTO);
+        System.out.println(orderNo);
+        return ResponseEntity.ok(orderNo);
+    }
+
     @PostMapping("/ai")
-    public ResponseEntity<String> receivePaymentRequest(@RequestBody SellerDTO sellerDTO, @RequestParam String memberNo) {
+    public ResponseEntity<Object> receivePaymentRequest(@RequestBody SellerDTO sellerDTO, @RequestParam String memberNo) {
         CardRecommendDTO recommendDTO = chatGptService.getCardBenefit(sellerDTO, memberNo);
         if(recommendDTO == null) {
             return ResponseEntity.status(500).body("추천 카드 없음");
         }
         ;
-        return ResponseEntity.ok(recommendDTO.toString());
+        return ResponseEntity.ok(recommendDTO);
 
 //        try {
 //            CardRecommendDTO recommendDTO = chatGptService.getCardBenefit(sellerDTO, memberNo);

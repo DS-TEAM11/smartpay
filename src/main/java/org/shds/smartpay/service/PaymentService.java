@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 
 public interface PaymentService {
-    void firstSaveHistory(PayInfoDTO payInfoDTO);
+    String firstSaveHistory(PayInfoDTO payInfoDTO);
 
     CompletableFuture<Integer> secondSaveHistory(PayInfoDTO payInfoDTO);
 
