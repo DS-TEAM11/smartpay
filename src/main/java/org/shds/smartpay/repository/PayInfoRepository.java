@@ -20,12 +20,13 @@ public interface PayInfoRepository extends JpaRepository<PayInfo, Long> {
     @Query("""
         select p
         from PayInfo p
-        where p.regDate between :startDate and :endDate
+        where p.regDate between :startDate and :endDate and p.memberNo = :memberNo
         order by p.payDate desc
     """)
     List<PayInfo> findByDateOrderByPayDate(
             @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate
+            @Param("endDate") LocalDateTime endDate,
+            @Param("memberNo") String memberNo
     );
 
 

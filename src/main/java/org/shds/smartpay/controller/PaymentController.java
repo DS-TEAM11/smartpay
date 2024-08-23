@@ -8,15 +8,16 @@ import org.shds.smartpay.entity.PayInfo;
 import org.shds.smartpay.service.CardService;
 import org.shds.smartpay.service.ChatGptService;
 import org.shds.smartpay.service.PaymentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static net.minidev.json.JSONValue.isValidJson;
 
 @RestController
 @RequestMapping("/api/payment/")
@@ -88,8 +89,30 @@ public class PaymentController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/done")
+    public ResponseEntity<PayInfoDTO> purchaseLogicDone(@RequestParam String orderNo) {
+        //TODO: 결제 완료 후 payInfo에서 데이터 뽑아와서 리턴하는 기능 추가 필요
+        // payInfoRepository.findByOrderNo(orderNo)
+        // 위 값으로 받아온 결과를 return
+        return null;
 
+    }
 
+    @GetMapping("/history")
+    public ResponseEntity<List<PayInfoDTO>> history(
+        @RequestParam(required = false) String payDate
+        , @RequestParam String memberNo
+        , @RequestParam(required = false) String cardNo
+    ) {
+        try {
+            // payDate, memberNo, cardNo를 이용하여 최근 결제 내역 조회
+            List<PayInfoDTO> payInfoDTOs = paymentService.findByDateOrderByPayDate(payDate, memberNo, cardNo);
 
+            return ResponseEntity.ok(payInfoDTOs); // 조회된 결제 내역 반환
+        } catch (Exception e) {
+            // 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
 
