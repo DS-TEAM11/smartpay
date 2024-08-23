@@ -46,7 +46,7 @@ public class ChatGptController {
                         "4. 근거: [Detailed explanation of why this card is recommended]\n" +
                         "5. 유의사항: [Any conditions or limitations of the benefit]\n" +
                         "\nAlways consider the card's conditions and the user's spending patterns. Ensure all information is accurate based on the provided data. "
-                        + "\nPlease Answer by Korean")
+                        + "\nPlease Answer by Korean, 요체를 써서 공손하게 답변 작성.")
                 .user(message)
                 .call().content();
         return answer;
