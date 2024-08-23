@@ -35,6 +35,11 @@ public class Member extends BaseEntity{
         this.role = MemberRole.USER;
     }
 
+    // 결제 비밀번호 설정 메소드
+    public void setPayPwd(String payPwd) {
+        this.payPwd = payPwd;
+    }
+
     // 비밀번호 암호화 메소드
     public void passwordEncode(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);

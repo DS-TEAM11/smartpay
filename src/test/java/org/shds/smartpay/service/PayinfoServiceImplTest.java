@@ -44,6 +44,4 @@ public class PayinfoServiceImplTest {
         System.out.println(result);
         System.out.println("---------------------------");
     }
-
-
 }

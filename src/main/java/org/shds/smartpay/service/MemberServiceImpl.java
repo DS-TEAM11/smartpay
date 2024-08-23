@@ -28,6 +28,16 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Member findByMemberNo(String memberNo){
+        return memberRepository.findByMemberNo(memberNo).get();
+    }
+
+    @Override
+    public void updateMember(Member member){
+        memberRepository.save(member);
+    }
+
+    @Override
     public Member registerNewMember(MemberRegisterDTO memberRegisterDTO) throws Exception {
         if (memberRepository.findByEmail(memberRegisterDTO.getEmail()).isPresent()){
             throw new Exception("이미 존재하는 이메일입니다.");
