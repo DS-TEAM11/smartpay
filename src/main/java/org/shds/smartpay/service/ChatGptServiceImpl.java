@@ -36,14 +36,14 @@ public class ChatGptServiceImpl implements ChatGptService {
         for (Card c : cardRepository.findByMemberNo(memberNo)) {
             cardList.add(c.getCardCode());
         }
-        System.out.println("카드리스트 조회 결과 ---------------");
-        System.out.println(cardList.toString());
+//        System.out.println("카드리스트 조회 결과 ---------------");
+//        System.out.println(cardList.toString());
         //임시로 테스트용 카드 코드 추가
 //        cardList.add("13060013");
 //        cardList.add("13060049");
 //        cardList.add("03062657");
 
-        //card_benefits 테이블에 해당하는 카드 코드가 없는 경우
+        //card_benefits 테이블에서 카드 리스트 뽑아오기, 등록된 모든 카드에 대한 혜택이 DB에 존재하지 않으면 null 리턴
         List<List<CardBenefits>> cardInfo = new ArrayList<>();
         for (String cardCode : cardList) {
             cardInfo.add(benefitsRepository.findAllByCardCode(cardCode));

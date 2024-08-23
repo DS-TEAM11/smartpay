@@ -36,8 +36,9 @@ public class History {
 
     private Integer savePrice;
     private Integer saveType;
-    private String franchiseName;
+
     private String franchiseCode;
+    private String franchiseName;
     private String memberNo;
 
 }

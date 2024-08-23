@@ -39,6 +39,5 @@ public class PayInfo extends BaseEntity {
 
     private String franchiseCode;
     private String franchiseName;
-
-        private String memberNo;
+    private String memberNo;
 }

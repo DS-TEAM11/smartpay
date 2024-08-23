@@ -2,16 +2,17 @@ package org.shds.smartpay.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.shds.smartpay.dto.CardRecommendDTO;
-import org.shds.smartpay.dto.PayInfoDTO;
-import org.shds.smartpay.dto.SellerDTO;
+import org.shds.smartpay.dto.*;
+import org.shds.smartpay.entity.CardInfo;
 import org.shds.smartpay.entity.PayInfo;
+import org.shds.smartpay.service.CardService;
 import org.shds.smartpay.service.ChatGptService;
 import org.shds.smartpay.service.PaymentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static net.minidev.json.JSONValue.isValidJson;
@@ -23,13 +24,10 @@ import static net.minidev.json.JSONValue.isValidJson;
 public class PaymentController {
     private final PaymentService paymentService;
     private final ChatGptService chatGptService;
+    private final CardService cardService;
 
     @PostMapping("/ai")
     public ResponseEntity<String> receivePaymentRequest(@RequestBody SellerDTO sellerDTO, @RequestParam String memberNo) {
-//        System.out.println("####################################");
-//        System.out.println(sellerDTO);
-//        System.out.println(memberNo);
-//        System.out.println("####################################");
         CardRecommendDTO recommendDTO = chatGptService.getCardBenefit(sellerDTO, memberNo);
         if(recommendDTO == null) {
             return ResponseEntity.status(500).body("추천 카드 없음");
@@ -56,6 +54,7 @@ public class PaymentController {
                 .exceptionally(ex -> {
                     log.error("Error occurred", ex);
                     return -1;
+//                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
                 });
     }
 
@@ -64,10 +63,19 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.cardRankList(category));
     }
 
-    //주문번호가 보여도 괜찮나...?
-    @PostMapping("/completed")
+    @GetMapping("/completed")
     public ResponseEntity<PayInfo> completePayment(@RequestParam String orderNo) {
         return ResponseEntity.ok(paymentService.getPayInfo(orderNo));
+    }
+
+    @PostMapping("/card")
+    public ResponseEntity<Map<String, Object>> getCardInfo(@RequestBody Map<String, Object> map) {
+
+        String cardCode = (String) map.get("cardCode");
+        String memberNo = (String) map.get("memberNo");
+        Map<String, Object> result = cardService.getMemCardInfo(cardCode, memberNo);
+
+        return ResponseEntity.ok(result);
     }
 
 

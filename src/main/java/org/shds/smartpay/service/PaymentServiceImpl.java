@@ -45,6 +45,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .payDate(payInfoDTO.getPayDate())
                 .franchiseName(payInfoDTO.getFranchiseName())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
+                .franchiseName(payInfoDTO.getFranchiseName())
                 .memberNo(payInfoDTO.getMemberNo())
                 .build();
         payHistoryRepository.save(history);
@@ -67,6 +68,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .savePrice(payInfoDTO.getSaveType())
                 .franchiseName(payInfoDTO.getFranchiseName())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
+                .franchiseName(payInfoDTO.getFranchiseName())
                 .memberNo(payInfoDTO.getMemberNo())
                 .build();
         payHistoryRepository.save(history);
@@ -86,6 +88,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .payDate(payInfoDTO.getPayDate())
                 .franchiseName(payInfoDTO.getFranchiseName())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
+                .franchiseName(payInfoDTO.getFranchiseName())
                 .requestName(memberName)
                 .build();
 
@@ -124,6 +127,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .payDate(payInfoDTO.getPayDate())
                 .saveType(payInfoDTO.getSaveType())
                 .savePrice(payInfoDTO.getSaveType())
+                .franchiseCode(payInfoDTO.getFranchiseCode())
                 .franchiseName(payInfoDTO.getFranchiseName())
                 .memberNo(payInfoDTO.getMemberNo())
                 .approval(approval)
@@ -227,4 +231,6 @@ public class PaymentServiceImpl implements PaymentService {
     public PayInfo getPayInfo(String orderNo) {
         return payInfoRepository.findByOrderNo(orderNo);
     }
+
+
 }
