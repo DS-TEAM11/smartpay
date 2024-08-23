@@ -30,10 +30,9 @@ public class PayinfoServiceImplTest {
     @Test
     public void findByDateOrderByPayDate() {
 
-        String payDate = "20240814";
-        String memberNo = "dd7ae501-0bbe-41d0-b4b7-c3cbded39a2a";
+        String payDate = null;
+        String memberNo = "acb944d7-2770-4eb5-a416-d9c1403601e0";
         String cardNo = null;
-//        String codeNo = "1111-1111-1111-1111";
 
         List<PayInfoDTO> result = paymentService.findByDateOrderByPayDate(
             payDate

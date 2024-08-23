@@ -61,12 +61,12 @@ public class payInfoRepositoryTests {
 
         LocalDateTime startDateTime = startLocalDate.atStartOfDay();  // 시작 날짜의 시작 시간 (00:00:00)
         LocalDateTime endDateTime = now.atTime(LocalTime.MAX);        // 종료 날짜의 마지막 시간 (23:59:59)
-
+        String memberNo = "acb944d7-2770-4eb5-a416-d9c1403601e0";
         System.out.println("-------------------------------");
         System.out.println(startDateTime);
         System.out.println(endDateTime);
         System.out.println("-------------------------------");
-        List<PayInfo> payInfos = payInfoRepository.findByDateOrderByPayDate(startDateTime, endDateTime);
+        List<PayInfo> payInfos = payInfoRepository.findByDateOrderByPayDate(startDateTime, endDateTime, memberNo);
         System.out.println(payInfos);
     }
 

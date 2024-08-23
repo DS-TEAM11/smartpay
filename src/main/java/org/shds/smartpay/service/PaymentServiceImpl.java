@@ -151,7 +151,7 @@ public class PaymentServiceImpl implements PaymentService {
         final List<Card> cardList = new ArrayList<>();
 
         // 카드번호가 없으면 memberNo로 전체 카드 리스트 조회
-        if (cardNo == null) {
+        if (cardNo == "" || cardNo == null) {
             cardList.addAll(cardRepository.findByMemberNo(memberNo));
         }
         // 카드번호가 있으면 해당 카드만 조회하여 리스트에 추가
@@ -164,7 +164,13 @@ public class PaymentServiceImpl implements PaymentService {
         System.out.println("###########################################");
 
         // 지불일자가 있는 경우 해당 날짜 범위로 PayInfo 조회
-        if (payDate != null) {
+        if (cardNo == "" || cardNo == null) {
+            startDateTime = startLocalDate.atStartOfDay();  // 시작 날짜의 시작 시간 (00:00:00)
+            endDateTime = now.atTime(LocalTime.MAX);
+            payInfos = payInfoRepository.findByDateOrderByPayDate(startDateTime, endDateTime, memberNo);
+        }
+        // 지불일자가 없으면 최근 일주일 범위로 PayInfo 조회
+        else {
             // DateTimeFormatter 정의
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
@@ -172,14 +178,7 @@ public class PaymentServiceImpl implements PaymentService {
             startDateTime = LocalDateTime.parse(payDate + "000000", DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
             endDateTime = LocalDateTime.parse(payDate + "235959", DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
-            payInfos = payInfoRepository.findByDateOrderByPayDate(startDateTime, endDateTime);
-        }
-        // 지불일자가 없으면 최근 일주일 범위로 PayInfo 조회
-        else {
-            startDateTime = startLocalDate.atStartOfDay();  // 시작 날짜의 시작 시간 (00:00:00)
-            endDateTime = now.atTime(LocalTime.MAX);
-
-            payInfos = payInfoRepository.findByDateOrderByPayDate(startDateTime, endDateTime);
+            payInfos = payInfoRepository.findByDateOrderByPayDate(startDateTime, endDateTime, memberNo);
         }
 
         // PayInfo를 PayInfoDTO로 변환
