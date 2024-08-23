@@ -10,10 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class SellerDTO {
-    //구매자 정보 포함해서 보내기
-    private String email;
-    //order_no QR 생성 시
-    private String orderNo;
+    //접속한 링크의 구매자 memberNo
+    private String memberNo;
 
     //AI 필요한 정보
     private String franchiseCode; //프랜차이즈코드 테이블 참고

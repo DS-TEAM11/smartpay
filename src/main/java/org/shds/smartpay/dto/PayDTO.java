@@ -9,11 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class PayDTO {
+public class PayDTO { //카드사에 보낼 정보
     private String product;
     private Integer price;
     private String cardNo;
     private String payDate;
     private String franchiseCode;
+    private String franchiseName;
     private String requestName;
 }

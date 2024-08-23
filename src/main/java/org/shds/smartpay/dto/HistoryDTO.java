@@ -26,6 +26,7 @@ public class HistoryDTO {
     private LocalDateTime regDate;
     private Integer savePrice;
     private Integer saveType;
-    private Integer franchiseNo;
+    private String franchiseCode;
+    private String franchiseName;
     private String memberNo;
 }

@@ -44,6 +44,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .gptState(0)  // 아직 AI 로직 돌기 전
                 .payDate(payInfoDTO.getPayDate())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
+                .franchiseName(payInfoDTO.getFranchiseName())
                 .memberNo(payInfoDTO.getMemberNo())
                 .build();
         payHistoryRepository.save(history);
@@ -65,6 +66,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .saveType(payInfoDTO.getSaveType())
                 .savePrice(payInfoDTO.getSaveType())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
+                .franchiseName(payInfoDTO.getFranchiseName())
                 .memberNo(payInfoDTO.getMemberNo())
                 .build();
         payHistoryRepository.save(history);
@@ -83,6 +85,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .product(payInfoDTO.getProduct())
                 .payDate(payInfoDTO.getPayDate())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
+                .franchiseName(payInfoDTO.getFranchiseName())
                 .requestName(memberName)
                 .build();
 
@@ -122,6 +125,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .saveType(payInfoDTO.getSaveType())
                 .savePrice(payInfoDTO.getSaveType())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
+                .franchiseName(payInfoDTO.getFranchiseName())
                 .memberNo(payInfoDTO.getMemberNo())
                 .approval(approval)
                 .build();
