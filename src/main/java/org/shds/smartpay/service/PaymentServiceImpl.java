@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -231,6 +232,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .savePrice(payInfo.getSavePrice())
                     .saveType(payInfo.getSaveType())
                     .franchiseCode(payInfo.getFranchiseCode())
+                    .franchiseName(payInfo.getFranchiseName())
                     .memberNo(payInfo.getMemberNo())
                     .cardImage(cardImage)  // 카드 이미지 설정
                     .build();

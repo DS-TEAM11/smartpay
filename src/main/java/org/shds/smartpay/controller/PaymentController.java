@@ -89,7 +89,7 @@ public class PaymentController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<List<PayInfoDTO>> recent(
+    public ResponseEntity<List<PayInfoDTO>> history(
         @RequestParam(required = false) String payDate
         , @RequestParam String memberNo
         , @RequestParam(required = false) String cardNo
