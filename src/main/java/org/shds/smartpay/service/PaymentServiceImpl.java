@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -33,10 +34,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional
     @Override
-    public void firstSaveHistory(PayInfoDTO payInfoDTO) throws DataAccessException {
+    public String firstSaveHistory(PayInfoDTO payInfoDTO) throws DataAccessException {
         // 첫번째 결제 로그 저장
         History history = History.builder()
-                .orderNo(payInfoDTO.getOrderNo())
+                .orderNo(UUID.randomUUID().toString())
                 .product(payInfoDTO.getProduct())
                 .price(payInfoDTO.getPrice())
                 .cardCode(payInfoDTO.getCardCode())
@@ -45,10 +46,10 @@ public class PaymentServiceImpl implements PaymentService {
                 .payDate(payInfoDTO.getPayDate())
                 .franchiseName(payInfoDTO.getFranchiseName())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
-                .franchiseName(payInfoDTO.getFranchiseName())
                 .memberNo(payInfoDTO.getMemberNo())
                 .build();
         payHistoryRepository.save(history);
+        return history.getOrderNo();
     }
 
     @Transactional

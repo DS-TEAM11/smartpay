@@ -1,7 +1,9 @@
 package org.shds.smartpay.repository;
 
 import org.junit.jupiter.api.Test;
+import org.shds.smartpay.dto.PayInfoDTO;
 import org.shds.smartpay.entity.History;
+import org.shds.smartpay.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -16,7 +18,8 @@ public class payHistoryRepositoryTests {
 
     @Autowired
     private PayHistoryRepository payHistoryRepository;
-
+    @Autowired
+    private PaymentService paymentService;
     @Test
     public void testRankList(){
         List<Object[]> result = payHistoryRepository.getCardRankList("전체");
@@ -44,6 +47,21 @@ public class payHistoryRepositoryTests {
                     .build();
             System.out.println(payHistoryRepository.save(history));
         });
+    }
+
+    @Test
+    public void firstSaveTest(){
+        PayInfoDTO dto = new PayInfoDTO();
+        dto.setProduct("아메리카노111");
+        dto.setPrice(1000);
+        dto.setCardNo("1111-1111-1111-1111");
+        dto.setGetIsAi(true);
+        dto.setPayDate("20010101");
+        dto.setFranchiseCode("1");
+        dto.setFranchiseName("ㅁㄴㅇㄹ");
+        dto.setMemberNo("testetseat");
+
+        System.out.println(paymentService.firstSaveHistory(dto));
     }
 
     @Test
