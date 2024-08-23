@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -57,5 +58,11 @@ public class CardServiceImpl implements CardService {
     @Override
     public List<Card> getCardsByMemberNo(String memberNo) {
         return cardRepository.findByMemberNo(memberNo);
+    }
+
+    //memberNo와 cardCode로 조회한 해당 카드 정보
+    @Override
+    public Map<String, Object> getMemCardInfo(String cardNo, String memberNo) {
+        return cardInfoRepository.getMemCardInfo(cardNo, memberNo);
     }
 }

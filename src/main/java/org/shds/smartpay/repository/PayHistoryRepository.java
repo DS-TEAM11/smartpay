@@ -16,4 +16,12 @@ public interface PayHistoryRepository extends JpaRepository<History, Long> {
             "AND approval = 0 " +
             "GROUP BY card_code", nativeQuery = true)
     List<Map<String, Object>> findPreviousSpendingByMemberNo(String memberNo);
+
+    @Query(value = "SELECT COUNT(ph.card_code) AS cnt, ci.card_code, ci.card_name, ci.card_company, ci.card_img, ci.card_link " +
+            "FROM card_info ci, pay_history ph " +
+            "WHERE ph.card_code = ci.card_code AND ph.approval = 0 AND (ci.card_category = :category OR :category = '전체') " +
+            "GROUP BY ph.card_code " +
+            "ORDER BY cnt DESC " +
+            "LIMIT 5", nativeQuery = true)
+    List<Object[]> getCardRankList(String category);
 }

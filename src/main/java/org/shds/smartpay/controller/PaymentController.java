@@ -2,17 +2,17 @@ package org.shds.smartpay.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.shds.smartpay.dto.CardRecommendDTO;
-import org.shds.smartpay.dto.HistoryDTO;
-import org.shds.smartpay.dto.PayInfoDTO;
-import org.shds.smartpay.dto.SellerDTO;
+import org.shds.smartpay.dto.*;
+import org.shds.smartpay.entity.CardInfo;
+import org.shds.smartpay.entity.PayInfo;
+import org.shds.smartpay.service.CardService;
 import org.shds.smartpay.service.ChatGptService;
 import org.shds.smartpay.service.PaymentService;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static net.minidev.json.JSONValue.isValidJson;
@@ -24,6 +24,7 @@ import static net.minidev.json.JSONValue.isValidJson;
 public class PaymentController {
     private final PaymentService paymentService;
     private final ChatGptService chatGptService;
+    private final CardService cardService;
 
     @PostMapping("/ai")
     public ResponseEntity<String> receivePaymentRequest(@RequestBody SellerDTO sellerDTO, @RequestParam String memberNo) {
@@ -31,6 +32,7 @@ public class PaymentController {
         if(recommendDTO == null) {
             return ResponseEntity.status(500).body("추천 카드 없음");
         }
+        ;
         return ResponseEntity.ok(recommendDTO.toString());
 
 //        try {
@@ -56,14 +58,27 @@ public class PaymentController {
                 });
     }
 
-    @GetMapping("/done")
-    public ResponseEntity<PayInfoDTO> purchaseLogicDone(@RequestParam String orderNo) {
-        //TODO: 결제 완료 후 payInfo에서 데이터 뽑아와서 리턴하는 기능 추가 필요
-        // payInfoRepository.findByOrderNo(orderNo)
-        // 위 값으로 받아온 결과를 return
-        return null;
-
+    @GetMapping("/ranking")
+    public ResponseEntity<List<Object[]>> getCardRankList(@RequestParam String category){
+        return ResponseEntity.ok(paymentService.cardRankList(category));
     }
+
+    @GetMapping("/completed")
+    public ResponseEntity<PayInfo> completePayment(@RequestParam String orderNo) {
+        return ResponseEntity.ok(paymentService.getPayInfo(orderNo));
+    }
+
+    @PostMapping("/card")
+    public ResponseEntity<Map<String, Object>> getCardInfo(@RequestBody Map<String, Object> map) {
+
+        String cardCode = (String) map.get("cardCode");
+        String memberNo = (String) map.get("memberNo");
+        Map<String, Object> result = cardService.getMemCardInfo(cardCode, memberNo);
+
+        return ResponseEntity.ok(result);
+    }
+
+
 
 
 }

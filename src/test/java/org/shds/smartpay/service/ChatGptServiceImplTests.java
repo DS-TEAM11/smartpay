@@ -13,7 +13,7 @@ public class ChatGptServiceImplTests {
     @Test
     public void responseTest() {
         SellerDTO sellerDTO = new SellerDTO();
-        sellerDTO.setEmail("test@test.com");
+        sellerDTO.setMemberNo("test@test.com");
         sellerDTO.setFranchiseName("GS25");
         sellerDTO.setFranchiseCode("10003");
         sellerDTO.setPurchasePrice(50000);
