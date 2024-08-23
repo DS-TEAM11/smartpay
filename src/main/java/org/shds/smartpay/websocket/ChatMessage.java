@@ -1,4 +1,4 @@
-package org.shds.smartpay.dto;
+package org.shds.smartpay.websocket;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

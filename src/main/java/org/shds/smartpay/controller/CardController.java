@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -111,4 +112,44 @@ public class CardController {
         return ResponseEntity.ok(cards); // 카드가 없을 경우 빈 리스트를 반환
     }
 
+    //MemberNo에 있는 카드데이터를 cardInfo와 매핑시켜서 들고와야함
+    @GetMapping("/details/byMember")
+    public ResponseEntity<List<CardDTO>> getCardDetailsByMemberNo(@RequestParam String memberNo) {
+        // memberNo로 카드 조회
+        List<Card> cards = cardRepository.findByMemberNo(memberNo);
+
+        // 각 카드에 대해 CardInfo에서 카드 이름과 카드사 정보를 가져와 새로운 DTO 객체로 설정
+        List<CardDTO> cardDTOs = cards.stream()
+                .map(card -> {
+                    Optional<CardInfo> cardInfoOpt = cardInfoRepository.findById(card.getCardCode());
+                    return cardInfoOpt.map(cardInfo -> CardDTO.builder()
+                            .cardNo(card.getCardNo())
+                            .cardNick(card.getCardNick())
+                            .cardName(cardInfo.getCardName()) // 카드 이름 추가
+                            .cardCompany(cardInfo.getCardCompany()) // 카드 회사 추가
+                            .isCredit(card.getIsCredit())
+                            .cardPwd(card.getCardPwd())
+                            .validPeriod(card.getValidPeriod())
+                            .regUser(card.getRegUser())
+                            .cardCode(card.getCardCode())
+                            .memberNo(card.getMemberNo())
+                            .cardImage(card.getCardImage()) // 카드 이미지 설정
+                            .build()
+                    ).orElse(CardDTO.builder()
+                            .cardNo(card.getCardNo())
+                            .cardNick(card.getCardNick())
+                            .cardName("Unknown Card") // 기본값 설정
+                            .isCredit(card.getIsCredit())
+                            .cardPwd(card.getCardPwd())
+                            .validPeriod(card.getValidPeriod())
+                            .regUser(card.getRegUser())
+                            .cardCode(card.getCardCode())
+                            .memberNo(card.getMemberNo())
+                            .cardImage(card.getCardImage()) // 기본 이미지를 사용
+                            .build());
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(cardDTOs);
+    }
 }

@@ -33,6 +33,14 @@ public class CardDTO {
 
     private String cardImage; //카드이미지
 
+    private String cardName;
+
+    private String cardCompany;
+
+    private String cardBenefit1;
+    private String cardBenefit2;
+    private String cardBenefit3;
+
 
 
 }
