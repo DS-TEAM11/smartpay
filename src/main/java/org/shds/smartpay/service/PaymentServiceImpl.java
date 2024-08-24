@@ -192,13 +192,13 @@ public class PaymentServiceImpl implements PaymentService {
         System.out.println(cardList);
         System.out.println("###########################################");
 
-        // 지불일자가 있는 경우 해당 날짜 범위로 PayInfo 조회
-        if (cardNo == "" || cardNo == null) {
+        // 지불일자가 없으면 최근 일주일 범위로 PayInfo 조회
+        if (payDate == "" || payDate == null) {
             startDateTime = startLocalDate.atStartOfDay();  // 시작 날짜의 시작 시간 (00:00:00)
             endDateTime = now.atTime(LocalTime.MAX);
             payInfos = payInfoRepository.findByDateOrderByPayDate(startDateTime, endDateTime, memberNo);
         }
-        // 지불일자가 없으면 최근 일주일 범위로 PayInfo 조회
+        // 지불일자가 있는 경우 해당 날짜 범위로 PayInfo 조회
         else {
             // DateTimeFormatter 정의
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
