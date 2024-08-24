@@ -40,6 +40,8 @@ public class PaymentController {
     @PostMapping("/ai")
     public ResponseEntity<Object> receivePaymentRequest(@RequestBody SellerDTO sellerDTO, @RequestParam String memberNo) {
         CardRecommendDTO recommendDTO = chatGptService.getCardBenefit(sellerDTO, memberNo);
+        System.out.println(sellerDTO.toString());
+        System.out.println(memberNo);
         if(recommendDTO == null) {
             return ResponseEntity.status(500).body("추천 카드 없음");
         }
