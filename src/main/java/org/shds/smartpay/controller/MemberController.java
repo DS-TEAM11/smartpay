@@ -62,19 +62,6 @@ public class MemberController {
         }
     }
 
-//    @PostMapping("/setPaypwd")
-//    public ResponseEntity<String> setPaypwd(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody PayPwdRequest request) {
-//        String email = userDetails.getUsername();
-//        Member member = memberService.findByEmail(email);
-//        if (member != null) {
-//            member.setPayPwd(request.getPayPwd());
-//            memberService.updateMember(member);
-//            return ResponseEntity.ok(String.valueOf(member.getMemberNo()));
-//        } else {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원 정보를 찾을 수 없습니다.");
-//        }
-//    }
-
     @PostMapping("/setPaypwd")
     public ResponseEntity<String> setPaypwd(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody PayPwdRequest request) {
         //String email = userDetails.getUsername();
@@ -85,6 +72,16 @@ public class MemberController {
             return ResponseEntity.ok(String.valueOf(member.getMemberNo()));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원 정보를 찾을 수 없습니다.");
+        }
+    }
+
+    @PostMapping("/isTruePaypwd")
+    public ResponseEntity<Void> isTruePaypwd(@Valid @RequestBody PayPwdRequest request) {
+        boolean isTrue = memberService.verifyPayPwd(request.getMemberNo(), request.getPayPwd());
+        if (isTrue) {
+            return ResponseEntity.ok().build();  // 비밀번호 일치 시 200 OK
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // 비밀번호 불일치 시 404 Not Found
         }
     }
 

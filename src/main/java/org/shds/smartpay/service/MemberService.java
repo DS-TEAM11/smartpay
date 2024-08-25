@@ -9,4 +9,5 @@ public interface MemberService {
     Member findByEmail(String email);
     void updateMember(Member member);
     Member findByMemberNo(String memberNo);
+    boolean verifyPayPwd(String memberNo, String payPwd);
 }
