@@ -17,7 +17,7 @@ public interface CardInfoRepository extends JpaRepository<CardInfo, String> {
 
 
     //card_code와 member_no로 카드 정보 조회
-    @Query(value = "SELECT ci.card_code, ci.card_img, ci.card_company, ci.card_name, c.card_nick, substr(c.card_no, 13, 16) as lastNums " +
+    @Query(value = "SELECT ci.card_code, ci.card_img, substr(ci.card_company, 1, 2) as card_company, ci.card_name, c.card_nick, c.card_no as lastNums " +
             "FROM card_info ci, card c " +
             "WHERE ci.card_code = c.card_code AND c.card_code = :cardCode " +
             "AND c.member_no = :memberNo", nativeQuery = true)
