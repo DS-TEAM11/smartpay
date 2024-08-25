@@ -1,6 +1,7 @@
 package org.shds.smartpay.service;
 
 import org.junit.jupiter.api.Test;
+import org.shds.smartpay.dto.PayInfoDTO;
 import org.shds.smartpay.entity.PayInfo;
 import org.shds.smartpay.repository.PayInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +27,21 @@ public class PayinfoServiceImplTest {
         System.out.println("--------------------------");
     }
 
-//    @Test
-//    public void findByDateOrderByPayDate() {
-//
-//        String payDate = "20240814";
-//
-//        List<PayInfo> result = paymentService.findByDateOrderByPayDate(payDate);
-//
-//        System.out.println("---------------------------");
-//        System.out.println(result);
-//        System.out.println("---------------------------");
-//    }
+    @Test
+    public void findByDateOrderByPayDate() {
+
+        String payDate = null;
+        String memberNo = "acb944d7-2770-4eb5-a416-d9c1403601e0";
+        String cardNo = null;
+
+        List<PayInfoDTO> result = paymentService.findByDateOrderByPayDate(
+            payDate
+            , memberNo
+            , cardNo
+        );
+
+        System.out.println("---------------------------");
+        System.out.println(result);
+        System.out.println("---------------------------");
+    }
 }

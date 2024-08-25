@@ -32,10 +32,10 @@ public interface PaymentService {
     List<PayInfo> getPayInfosByMemberNo(String memberNo);
 
     /**
-     * 날짜 없으면 최근 1주일 조회  or 날짜 있으면 해당 일자 조회
+     * 회원의 카드리스트 날짜 없으면 최근 1주일 조회  or 날짜 있으면 해당 일자 조회
      * @param payDate 지급일자
      * @param memberNo 회원번호
      * @return
      */
-    List<PayInfo> findByDateOrderByPayDate(String payDate, String memberNo);
+    List<PayInfoDTO> findByDateOrderByPayDate(String payDate, String memberNo, String cardNo);
 }
