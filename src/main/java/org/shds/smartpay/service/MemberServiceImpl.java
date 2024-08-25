@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -35,6 +36,16 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void updateMember(Member member){
         memberRepository.save(member);
+    }
+
+    @Override
+    public boolean verifyPayPwd(String memberNo, String payPwd) {
+        Optional<Member> memberOptional = memberRepository.findByMemberNo(memberNo);
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            return member.getPayPwd().equals(payPwd);  // 비밀번호가 일치하는지 확인
+        }
+        return false;  // 회원이 없거나 비밀번호가 일치하지 않으면 false 반환
     }
 
     @Override
