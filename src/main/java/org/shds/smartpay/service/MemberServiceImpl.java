@@ -43,7 +43,8 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member> memberOptional = memberRepository.findByMemberNo(memberNo);
         if (memberOptional.isPresent()) {
             Member member = memberOptional.get();
-            return member.getPayPwd().equals(payPwd);  // 비밀번호가 일치하는지 확인
+            return passwordEncoder.matches(payPwd, member.getPayPwd());
+            //return member.getPayPwd().equals(payPwd);  // 비밀번호가 일치하는지 확인
         }
         return false;  // 회원이 없거나 비밀번호가 일치하지 않으면 false 반환
     }

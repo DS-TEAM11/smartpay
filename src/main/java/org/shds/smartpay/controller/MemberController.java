@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,8 @@ public class MemberController {
 
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public static class PayPwdRequest {
         @Pattern(regexp = "^\\d{6}$", message = "비밀번호는 6자리 숫자여야 합니다.")
@@ -68,6 +71,7 @@ public class MemberController {
         Member member = memberService.findByMemberNo(request.getMemberNo());
         if (member != null) {
             member.setPayPwd(request.getPayPwd());
+            member.paypwdEncode(passwordEncoder);
             memberService.updateMember(member);
             return ResponseEntity.ok(String.valueOf(member.getMemberNo()));
         } else {
