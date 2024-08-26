@@ -89,6 +89,18 @@ public class MemberController {
         }
     }
 
+    @GetMapping("/isPaypwdEmpty")
+    @ResponseBody
+    public ResponseEntity<Void> isPaypwdEmpty(@RequestParam String memberNo) {
+        boolean isEmpty = memberService.isPaypwdEmpty(memberNo);
+        if (isEmpty) {
+            return ResponseEntity.ok().build(); // 결제 비밀번호 없으면 200 OK
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 결제 비밀번호가 있거나 멤버가 없는 경우 404
+        }
+    }
+
+
 
     @GetMapping("/checkSms")
     @ResponseBody
