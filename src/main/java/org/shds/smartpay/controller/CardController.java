@@ -2,10 +2,8 @@ package org.shds.smartpay.controller;
 
 import org.shds.smartpay.dto.BinTableDTO;
 import org.shds.smartpay.dto.CardDTO;
-import org.shds.smartpay.entity.BinTable;
 import org.shds.smartpay.entity.Card;
 import org.shds.smartpay.entity.CardInfo;
-import org.shds.smartpay.repository.BinTableRepository;
 import org.shds.smartpay.repository.CardInfoRepository;
 import org.shds.smartpay.repository.CardRepository;
 import org.shds.smartpay.service.CardService;
@@ -14,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -151,5 +150,21 @@ public class CardController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(cardDTOs);
+    }
+
+    @GetMapping("/details/byMember2")
+    public ResponseEntity<List<Object>> getCardDetailsByMemberNo2(@RequestParam String memberNo) {
+        // memberNo로 카드 조회
+        List<Card> cards = cardRepository.findByMemberNo(memberNo);
+//memberNo로 조회한 카드의 정보가 없기 때문에 빌더로 값을 합치고 있었다.
+        // 각 카드에 대해 CardInfo에서 카드 이름과 카드사 정보를 가져와 새로운 DTO 객체로 설정
+        List<Optional<CardInfo>> cardInfo = cards.stream()
+                .map(card -> {
+                    return cardInfoRepository.findByCardCode(card.getCardCode());
+                }).collect(Collectors.toList());
+        List<Object> result = new ArrayList<>();
+        result.add(cards);
+        result.add(cardInfo);
+        return ResponseEntity.ok(result);
     }
 }
