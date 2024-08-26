@@ -43,7 +43,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .orderNo(UUID.randomUUID().toString())
                 .product(payInfoDTO.getProduct())
                 .price(payInfoDTO.getPrice())
-                .cardCode(payInfoDTO.getCardCode())
                 .isAi(payInfoDTO.isGetIsAi())
                 .gptState(0)  // 아직 AI 로직 돌기 전
                 .payDate(payInfoDTO.getPayDate())

@@ -45,6 +45,10 @@ public class Member extends BaseEntity{
         this.password = passwordEncoder.encode(this.password);
     }
 
+    public void paypwdEncode(PasswordEncoder passwordEncoder) {
+        this.payPwd = passwordEncoder.encode(this.payPwd);
+    }
+
     public void updateRefreshToken(String updateRefreshToken) {
         this.refreshToken = updateRefreshToken;
     }

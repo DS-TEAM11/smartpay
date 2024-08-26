@@ -2,6 +2,7 @@ package org.shds.smartpay.service;
 
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.shds.smartpay.entity.Member;
 import org.shds.smartpay.entity.MemberRole;
 import org.shds.smartpay.repository.MemberRepository;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@Slf4j
 public class MemberServiceImpl implements MemberService {
     @Autowired
     private MemberRepository memberRepository;
@@ -43,11 +45,18 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member> memberOptional = memberRepository.findByMemberNo(memberNo);
         if (memberOptional.isPresent()) {
             Member member = memberOptional.get();
-            return member.getPayPwd().equals(payPwd);  // 비밀번호가 일치하는지 확인
+            return passwordEncoder.matches(payPwd, member.getPayPwd());
+            //return member.getPayPwd().equals(payPwd);  // 비밀번호가 일치하는지 확인
         }
         return false;  // 회원이 없거나 비밀번호가 일치하지 않으면 false 반환
     }
 
+    @Override
+    public boolean isPaypwdEmpty(String memberNo) {
+        return memberRepository.findByMemberNo(memberNo)
+                .map(member -> member.getPayPwd() == null || member.getPayPwd().isEmpty())
+                .orElse(false); // 멤버가 존재하지 않으면 false 반환
+    }
     @Override
     public Member registerNewMember(MemberRegisterDTO memberRegisterDTO) throws Exception {
         if (memberRepository.findByEmail(memberRegisterDTO.getEmail()).isPresent()){

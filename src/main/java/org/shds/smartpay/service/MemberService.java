@@ -10,4 +10,5 @@ public interface MemberService {
     void updateMember(Member member);
     Member findByMemberNo(String memberNo);
     boolean verifyPayPwd(String memberNo, String payPwd);
+    boolean isPaypwdEmpty(String memberNo);
 }
