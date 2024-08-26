@@ -19,4 +19,6 @@ public class SellerDTO {
     private String franchiseName; //GS25 등
     private String purchaseItems; //판매 상품명
     private int purchasePrice; //판매 가격
+    private String payDate;
+    private String orderNo;
 }
