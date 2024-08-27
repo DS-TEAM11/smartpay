@@ -109,7 +109,7 @@ public class PaymentController {
     ) {
         try {
             // payDate, memberNo, cardNo를 이용하여 최근 결제 내역 조회
-            List<PayInfoDTO> payInfoDTOs = paymentService.findByDateOrderByPayDate(startDate, endDate, memberNo, cardNo);
+            List<PayInfoDTO> payInfoDTOs = paymentService.findByDateOrderByRegDate(startDate, endDate, memberNo, cardNo);
 
             return ResponseEntity.ok(payInfoDTOs); // 조회된 결제 내역 반환
         } catch (Exception e) {

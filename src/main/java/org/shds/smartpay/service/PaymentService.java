@@ -39,5 +39,5 @@ public interface PaymentService {
      * @param cardNo 가드번호
      * @return
      */
-    List<PayInfoDTO> findByDateOrderByPayDate(String startDate, String endDate, String memberNo, String cardNo);
+    List<PayInfoDTO> findByDateOrderByRegDate(String startDate, String endDate, String memberNo, String cardNo);
 }
