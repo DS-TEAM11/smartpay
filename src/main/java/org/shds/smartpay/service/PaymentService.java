@@ -33,9 +33,11 @@ public interface PaymentService {
 
     /**
      * 회원의 카드리스트 날짜 없으면 최근 1주일 조회  or 날짜 있으면 해당 일자 조회
-     * @param payDate 지급일자
+     * @param startDate 시작일
+     * @param endDate 종료일
      * @param memberNo 회원번호
+     * @param cardNo 가드번호
      * @return
      */
-    List<PayInfoDTO> findByDateOrderByPayDate(String payDate, String memberNo, String cardNo);
+    List<PayInfoDTO> findByDateOrderByPayDate(String startDate, String endDate, String memberNo, String cardNo);
 }
