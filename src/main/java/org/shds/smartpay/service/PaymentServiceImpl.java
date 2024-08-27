@@ -11,12 +11,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.scheduler.Schedulers;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -68,7 +62,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .gptState(1)  // AI 로직 돌고난 후
                 .payDate(payInfoDTO.getPayDate())
                 .saveType(payInfoDTO.getSaveType())
-                .savePrice(payInfoDTO.getSaveType())
+                .savePrice(payInfoDTO.getSavePrice())
                 .franchiseName(payInfoDTO.getFranchiseName())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
                 .franchiseName(payInfoDTO.getFranchiseName())
@@ -129,7 +123,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .gptState(1)  // AI 로직 돌고난 후
                 .payDate(payInfoDTO.getPayDate())
                 .saveType(payInfoDTO.getSaveType())
-                .savePrice(payInfoDTO.getSaveType())
+                .savePrice(payInfoDTO.getSavePrice())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
                 .franchiseName(payInfoDTO.getFranchiseName())
                 .memberNo(payInfoDTO.getMemberNo())
@@ -149,7 +143,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .cardCode(payInfoDTO.getCardCode())
                 .payDate(payInfoDTO.getPayDate())
                 .saveType(payInfoDTO.getSaveType())
-                .savePrice(payInfoDTO.getSaveType())
+                .savePrice(payInfoDTO.getSavePrice())
                 .franchiseName(payInfoDTO.getFranchiseName())
                 .franchiseCode(payInfoDTO.getFranchiseCode())
                 .isAi(payInfoDTO.isGetIsAi())
@@ -165,14 +159,11 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<PayInfoDTO> findByDateOrderByPayDate(
-            String payDate,
+            String startDate,
+            String endDate,
             String memberNo,
             String cardNo
     ) {
-        LocalDate now = LocalDate.now();
-        LocalDate startLocalDate = now.minusMonths(1);
-        LocalDateTime startDateTime;
-        LocalDateTime endDateTime;
         List<PayInfo> payInfos;
 
         // 카드 목록 초기화
@@ -192,51 +183,54 @@ public class PaymentServiceImpl implements PaymentService {
         System.out.println("###########################################");
 
         // 지불일자가 없으면 최근 일주일 범위로 PayInfo 조회
-        if (payDate == "" || payDate == null) {
-            startDateTime = startLocalDate.atStartOfDay();  // 시작 날짜의 시작 시간 (00:00:00)
-            endDateTime = now.atTime(LocalTime.MAX);
-            payInfos = payInfoRepository.findByDateOrderByPayDate(startDateTime, endDateTime, memberNo);
+        if (startDate == "" || endDate == "" || startDate == null || endDate == null) {
+            payInfos = payInfoRepository.findByDateOrderByPayDate(startDate, endDate, memberNo);
         }
         // 지불일자가 있는 경우 해당 날짜 범위로 PayInfo 조회
         else {
-            // DateTimeFormatter 정의
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-
-            // String 값을 LocalDateTime으로 변환 (기본 시간 추가)
-            startDateTime = LocalDateTime.parse(payDate + "000000", DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-            endDateTime = LocalDateTime.parse(payDate + "235959", DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-
-            payInfos = payInfoRepository.findByDateOrderByPayDate(startDateTime, endDateTime, memberNo);
+            payInfos = payInfoRepository.findByDateOrderByPayDate(startDate, endDate, memberNo);
         }
 
+        System.out.println("###########################################");
+        System.out.println(payInfos);
+        System.out.println("###########################################");
+
         // PayInfo를 PayInfoDTO로 변환
-        List<PayInfoDTO> result = payInfos.stream().map(payInfo -> {
-            // 해당 결제 정보와 연관된 카드 정보 가져오기
-            final Card matchingCard = cardList.stream()
-                    .filter(card -> card.getCardCode().equals(payInfo.getCardCode()))
-                    .findFirst()
-                    .orElse(null);
+        List<PayInfoDTO> result = payInfos.stream()
+                .map(payInfo -> {
+                    // 해당 결제 정보와 연관된 카드 정보 가져오기
+                    final Card matchingCard = cardList.stream()
+                            .filter(card -> card.getCardNo().equals(payInfo.getCardNo()))
+                            .findFirst()
+                            .orElse(null);
 
-            // 카드 이미지가 있으면 설정
-            final String cardImage = (matchingCard != null) ? matchingCard.getCardImage() : null;
+                    // 카드가 존재하지 않거나 cardNo가 일치하지 않는 경우 null 반환
+                    if (matchingCard == null || !matchingCard.getCardNo().equals(payInfo.getCardNo())) {
+                        return null;
+                    }
 
-            // PayInfoDTO 객체 생성
-            return PayInfoDTO.builder()
-                    .orderNo(payInfo.getOrderNo())
-                    .product(payInfo.getProduct())
-                    .price(payInfo.getPrice())
-                    .cardNo(payInfo.getCardNo())
-                    .cardCode(payInfo.getCardCode())
-                    .getIsAi(payInfo.getIsAi())
-                    .payDate(payInfo.getPayDate())
-                    .savePrice(payInfo.getSavePrice())
-                    .saveType(payInfo.getSaveType())
-                    .franchiseCode(payInfo.getFranchiseCode())
-                    .franchiseName(payInfo.getFranchiseName())
-                    .memberNo(payInfo.getMemberNo())
-                    .cardImage(cardImage)  // 카드 이미지 설정
-                    .build();
-        }).collect(Collectors.toList());
+                    // 카드 이미지가 있으면 설정
+                    final String cardImage = matchingCard.getCardImage();
+
+                    // PayInfoDTO 객체 생성
+                    return PayInfoDTO.builder()
+                            .orderNo(payInfo.getOrderNo())
+                            .product(payInfo.getProduct())
+                            .price(payInfo.getPrice())
+                            .cardNo(payInfo.getCardNo())
+                            .cardCode(payInfo.getCardCode())
+                            .getIsAi(payInfo.getIsAi())
+                            .payDate(payInfo.getPayDate())
+                            .savePrice(payInfo.getSavePrice())
+                            .saveType(payInfo.getSaveType())
+                            .franchiseCode(payInfo.getFranchiseCode())
+                            .franchiseName(payInfo.getFranchiseName())
+                            .memberNo(payInfo.getMemberNo())
+                            .cardImage(cardImage)  // 카드 이미지 설정
+                            .build();
+                })
+                .filter(dto -> dto != null) // null을 필터링하여 제외
+                .collect(Collectors.toList()); // 리스트로 수집
 
         return result;
     }

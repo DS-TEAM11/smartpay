@@ -102,13 +102,14 @@ public class PaymentController {
 
     @GetMapping("/history")
     public ResponseEntity<List<PayInfoDTO>> history(
-        @RequestParam(required = false) String payDate
+        @RequestParam(required = false) String startDate
+        , @RequestParam(required = false) String endDate
         , @RequestParam String memberNo
         , @RequestParam(required = false) String cardNo
     ) {
         try {
             // payDate, memberNo, cardNo를 이용하여 최근 결제 내역 조회
-            List<PayInfoDTO> payInfoDTOs = paymentService.findByDateOrderByPayDate(payDate, memberNo, cardNo);
+            List<PayInfoDTO> payInfoDTOs = paymentService.findByDateOrderByPayDate(startDate, endDate, memberNo, cardNo);
 
             return ResponseEntity.ok(payInfoDTOs); // 조회된 결제 내역 반환
         } catch (Exception e) {
