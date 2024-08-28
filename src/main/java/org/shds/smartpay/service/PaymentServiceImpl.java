@@ -158,7 +158,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<PayInfoDTO> findByDateOrderByPayDate(
+    public List<PayInfoDTO> findByDateOrderByRegDate(
             String startDate,
             String endDate,
             String memberNo,
@@ -184,11 +184,11 @@ public class PaymentServiceImpl implements PaymentService {
 
         // 지불일자가 없으면 최근 일주일 범위로 PayInfo 조회
         if (startDate == "" || endDate == "" || startDate == null || endDate == null) {
-            payInfos = payInfoRepository.findByDateOrderByPayDate(startDate, endDate, memberNo);
+            payInfos = payInfoRepository.findByDateOrderByRegDate(startDate, endDate, memberNo);
         }
         // 지불일자가 있는 경우 해당 날짜 범위로 PayInfo 조회
         else {
-            payInfos = payInfoRepository.findByDateOrderByPayDate(startDate, endDate, memberNo);
+            payInfos = payInfoRepository.findByDateOrderByRegDate(startDate, endDate, memberNo);
         }
 
         System.out.println("###########################################");
