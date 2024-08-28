@@ -3,6 +3,7 @@ package org.shds.smartpay.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.extern.log4j.Log4j2;
+import org.shds.smartpay.dto.MemberDTO;
 import org.shds.smartpay.dto.PayInfoDTO;
 import org.shds.smartpay.entity.Card;
 import org.shds.smartpay.entity.Member;
@@ -230,5 +231,25 @@ public class MemberController {
     @GetMapping("/admin")
     public void exAdmin() {
         log.info("exAdmin........");
+    }
+
+    @PostMapping("getMemberInfo")
+    public ResponseEntity<Object> getMemberInfo(@RequestParam String memberNo) {
+        Member member = memberService.findByMemberNo(memberNo);
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("회원 정보 없음");
+        }
+        MemberDTO memberDto = MemberDTO.builder()
+                .member_no(member.getMemberNo())
+                .email(member.getEmail())
+                .name(member.getName())
+                .phone(member.getPhone())
+                .from_social(member.isFromSocial())
+                .regUser(member.getRegUser())
+                .socialId(member.getSocialId())
+                .role(member.getRole())
+                .build();
+
+        return ResponseEntity.ok(memberDto);
     }
 }
