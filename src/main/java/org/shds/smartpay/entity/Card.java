@@ -3,6 +3,7 @@ package org.shds.smartpay.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import lombok.*;
 
 @Entity
@@ -31,4 +32,11 @@ public class Card extends BaseEntity {
 
     private String cardImage; //카드 이미지 가져오기
     private String memberNo;  // 회원 번호
+
+    @Transient
+    private int totalCardPrice;  // 이번달 총 결제금액을 추가
+
+    public void setTotalCardPrice(int totalCardPrice) {
+        this.totalCardPrice = totalCardPrice;
+    }
 }
