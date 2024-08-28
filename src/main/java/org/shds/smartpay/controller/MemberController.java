@@ -3,9 +3,13 @@ package org.shds.smartpay.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.extern.log4j.Log4j2;
+import org.shds.smartpay.dto.PayInfoDTO;
+import org.shds.smartpay.entity.Card;
 import org.shds.smartpay.entity.Member;
 import org.shds.smartpay.security.dto.MemberRegisterDTO;
+import org.shds.smartpay.service.CardService;
 import org.shds.smartpay.service.MemberService;
+import org.shds.smartpay.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +20,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Random;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @Log4j2
@@ -26,6 +33,13 @@ public class MemberController {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private PaymentService paymentService;
+
+    @Autowired
+    private CardService cardService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -64,6 +78,64 @@ public class MemberController {
             return ResponseEntity.notFound().build();  // 해당 사용자가 없는 경우 404 응답
         }
     }
+
+    @GetMapping("/getBenefit")
+    public ResponseEntity<Map<String, Object>> getPayInfo(@RequestParam String memberNo) {
+        try {
+            LocalDate now = LocalDate.now();
+            String startDate = now.withDayOfMonth(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String endDate = now.withDayOfMonth(now.lengthOfMonth()).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+            List<Card> cards = cardService.getCardsByMemberNo(memberNo);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("cards", cards);
+
+            List<PayInfoDTO> allPayInfo = new ArrayList<>();
+            for (Card card : cards) {
+                List<PayInfoDTO> payInfoDTOs = paymentService.findByDateOrderByRegDate(startDate, endDate, memberNo, card.getCardNo());
+
+                // getIsAi가 true인 요소만 필터링
+                List<PayInfoDTO> filteredPayInfoDTOs = payInfoDTOs.stream()
+                        .filter(PayInfoDTO::isGetIsAi)
+                        .collect(Collectors.toList());
+                allPayInfo.addAll(filteredPayInfoDTOs);
+
+                // 카드별 총 결제금액 계산 (getIsAi 여부와 상관없이 모든 결제 내역의 price를 더함)
+                int totalCardPrice = payInfoDTOs.stream()
+                        .mapToInt(PayInfoDTO::getPrice)
+                        .sum();
+
+                // 카드에 총 결제금액을 추가
+                card.setTotalCardPrice(totalCardPrice);
+
+                // 카드별로 필터링된 payInfoDTOs 리스트를 담아줌
+                response.put(card.getCardNo(), filteredPayInfoDTOs);
+            }
+
+            int totalSavePrice = allPayInfo.stream()
+                    .filter(dto -> dto.getSaveType() != null && dto.getSaveType() == 0)
+                    .mapToInt(dto -> dto.getSavePrice() != null ? dto.getSavePrice() : 0)
+                    .sum();
+
+            int totalDiscountPrice = allPayInfo.stream()
+                    .filter(dto -> dto.getSaveType() != null && dto.getSaveType() == 1)
+                    .mapToInt(dto -> dto.getSavePrice() != null ? dto.getSavePrice() : 0)
+                    .sum();
+
+            int totalBenefitPrice = totalSavePrice + totalDiscountPrice;
+
+            response.put("totalSavePrice", totalSavePrice);
+            response.put("totalDiscountPrice", totalDiscountPrice);
+            response.put("totalBenefitPrice", totalBenefitPrice);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
     @PostMapping("/setPaypwd")
     public ResponseEntity<String> setPaypwd(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody PayPwdRequest request) {
