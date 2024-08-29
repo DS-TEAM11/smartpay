@@ -25,4 +25,5 @@ public class PayInfoDTO {
     private String franchiseCode;
     private String memberNo;
     private String cardImage;
+    private String cardName;
 }

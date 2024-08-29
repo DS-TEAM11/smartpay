@@ -11,6 +11,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +31,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PayInfoRepository payInfoRepository;
     private final WebClient companyAPI;
     private final CardRepository cardRepository;
+    private final CardInfoRepository cardInfoRepository;
 
     @Transactional
     @Override
@@ -167,27 +171,37 @@ public class PaymentServiceImpl implements PaymentService {
         List<PayInfo> payInfos;
 
         // 카드 목록 초기화
-        final List<Card> cardList = new ArrayList<>();
+        List<Object[]> cardList;
 
         // 카드번호가 없으면 memberNo로 전체 카드 리스트 조회
-        if (cardNo == "" || cardNo == null) {
-            cardList.addAll(cardRepository.findByMemberNo(memberNo));
+        if (cardNo == null || cardNo.isEmpty()) {
+            cardList = cardInfoRepository.findCardsWithCardInfo(memberNo);
         }
         // 카드번호가 있으면 해당 카드만 조회하여 리스트에 추가
         else {
-            Optional<Card> cardOptional = cardRepository.findByCardNo(cardNo);
-            cardOptional.ifPresent(cardList::add);
+            cardList = cardInfoRepository.findBymemberNoAndcardCode(cardNo, memberNo);
         }
+
         System.out.println("###########################################");
         System.out.println(cardList);
         System.out.println("###########################################");
 
+        // 현재 날짜를 가져옵니다.
+        LocalDate now = LocalDate.now();
+
         // 지불일자가 없으면 최근 일주일 범위로 PayInfo 조회
-        if (startDate == "" || endDate == "" || startDate == null || endDate == null) {
+        if (startDate == null || startDate.isEmpty() || endDate == null || endDate.isEmpty()) {
+
+            LocalDate startDateFormat = now.minusDays(7);
+
+            // 날짜를 yyyyMMdd 형식으로 포맷합니다.
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+            startDate = formatter.format(startDateFormat);
+            endDate = formatter.format(now);
+
             payInfos = payInfoRepository.findByDateOrderByRegDate(startDate, endDate, memberNo);
-        }
-        // 지불일자가 있는 경우 해당 날짜 범위로 PayInfo 조회
-        else {
+        } else {
             payInfos = payInfoRepository.findByDateOrderByRegDate(startDate, endDate, memberNo);
         }
 
@@ -199,18 +213,22 @@ public class PaymentServiceImpl implements PaymentService {
         List<PayInfoDTO> result = payInfos.stream()
                 .map(payInfo -> {
                     // 해당 결제 정보와 연관된 카드 정보 가져오기
-                    final Card matchingCard = cardList.stream()
-                            .filter(card -> card.getCardNo().equals(payInfo.getCardNo()))
+                    final Object[] matchingCardInfo = cardList.stream()
+                            .filter(cardInfo -> ((Card) cardInfo[0]).getCardNo().equals(payInfo.getCardNo()))
                             .findFirst()
                             .orElse(null);
 
-                    // 카드가 존재하지 않거나 cardNo가 일치하지 않는 경우 null 반환
-                    if (matchingCard == null || !matchingCard.getCardNo().equals(payInfo.getCardNo())) {
+                    if (matchingCardInfo == null) {
                         return null;
                     }
 
-                    // 카드 이미지가 있으면 설정
+                    // Object[]에서 Card와 CardInfo를 추출
+                    Card matchingCard = (Card) matchingCardInfo[0];
+                    CardInfo matchingCardInfoDetails = (CardInfo) matchingCardInfo[1];
+
+                    // 카드 이미지 설정
                     final String cardImage = matchingCard.getCardImage();
+                    final String cardName = matchingCardInfoDetails.getCardName();
 
                     // PayInfoDTO 객체 생성
                     return PayInfoDTO.builder()
@@ -227,6 +245,7 @@ public class PaymentServiceImpl implements PaymentService {
                             .franchiseName(payInfo.getFranchiseName())
                             .memberNo(payInfo.getMemberNo())
                             .cardImage(cardImage)  // 카드 이미지 설정
+                            .cardName(cardName)
                             .build();
                 })
                 .filter(dto -> dto != null) // null을 필터링하여 제외

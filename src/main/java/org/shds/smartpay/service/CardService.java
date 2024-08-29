@@ -1,6 +1,7 @@
 package org.shds.smartpay.service;
 
 import org.shds.smartpay.dto.BinTableDTO;
+import org.shds.smartpay.dto.CardDTO;
 import org.shds.smartpay.entity.Card;
 import org.shds.smartpay.entity.CardInfo;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,4 +23,11 @@ public interface CardService {
     //card_code와 member_no로 카드 정보 조회
     Map<String, Object> getMemCardInfo(@RequestParam String cardNo, @RequestParam String memberNo);
 
+    // update
+    int updateByBenefitPriorityAndUsagePriority(
+        Integer benefitPriority
+        , Integer usagePriority
+        , String memberNo
+        , String cardNo
+    );
 }

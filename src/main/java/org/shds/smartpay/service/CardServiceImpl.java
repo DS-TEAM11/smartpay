@@ -1,6 +1,7 @@
 package org.shds.smartpay.service;
 
 import org.shds.smartpay.dto.BinTableDTO;
+import org.shds.smartpay.dto.CardDTO;
 import org.shds.smartpay.entity.BinTable;
 import org.shds.smartpay.entity.Card;
 import org.shds.smartpay.entity.CardInfo;
@@ -64,5 +65,23 @@ public class CardServiceImpl implements CardService {
     @Override
     public Map<String, Object> getMemCardInfo(String cardNo, String memberNo) {
         return cardInfoRepository.getMemCardInfo(cardNo, memberNo);
+    }
+
+    @Override
+    public int updateByBenefitPriorityAndUsagePriority(
+        Integer benefitPriority
+        , Integer usagePriority
+        , String memberNo
+        , String cardNo
+    ) {
+
+
+
+        return cardRepository.updateByBenefitPriorityAndUsagePriority(
+            benefitPriority
+            , usagePriority
+            , memberNo
+            , cardNo
+        );
     }
 }

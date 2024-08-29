@@ -71,7 +71,7 @@ public class payInfoRepositoryTests {
         System.out.println(startDate);
         System.out.println(endDate);
         System.out.println("-------------------------------");
-        List<PayInfo> payInfos = payInfoRepository.findByDateOrderByPayDate(startDate, endDate, memberNo);
+        List<PayInfo> payInfos = payInfoRepository.findByDateOrderByRegDate(startDate, endDate, memberNo);
         System.out.println(payInfos);
     }
 

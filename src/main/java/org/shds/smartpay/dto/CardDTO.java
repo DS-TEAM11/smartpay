@@ -41,6 +41,7 @@ public class CardDTO {
     private String cardBenefit2;
     private String cardBenefit3;
 
-
+    private int benefitPriority;
+    private int usagePriority;
 
 }
