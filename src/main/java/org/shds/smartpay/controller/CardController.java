@@ -175,25 +175,13 @@ public class CardController {
 
     @PostMapping("/update/benefit")
     public ResponseEntity<String> updateByBenefitPriorityAndUsagePriority(
-            @RequestBody CardDTO cardDTO) {
-
-
-        Integer benefitPriority = cardDTO.getBenefitPriority();
-        Integer usagePriority = cardDTO.getUsagePriority();
-        String memberNo = cardDTO.getMemberNo();
-        String cardNo = cardDTO.getCardNo();
+            @RequestBody List<CardDTO> cardDTOs) {
 
         int updatedCard = 0; // 선언/초기화
 
-        if (benefitPriority != null && usagePriority != null && memberNo != null && cardNo != null) {
-            // DTO에서 데이터를 추출하여 서비스 호출
-            updatedCard = cardService.updateByBenefitPriorityAndUsagePriority(
-                    benefitPriority
-                    , usagePriority
-                    , memberNo
-                    , cardNo
-            );
-        }
+
+        updatedCard = cardService.updateByBenefitPriorityAndUsagePriority(cardDTOs);
+
 
 
         // 업데이트 결과에 따라 응답 반환
