@@ -167,4 +167,35 @@ public class CardController {
         result.add(cardInfo);
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/update/benefit")
+    public ResponseEntity<String> updateByBenefitPriorityAndUsagePriority(
+            @RequestBody CardDTO cardDTO) {
+
+
+        Integer benefitPriority = cardDTO.getBenefitPriority();
+        Integer usagePriority = cardDTO.getUsagePriority();
+        String memberNo = cardDTO.getMemberNo();
+        String cardNo = cardDTO.getCardNo();
+
+        int updatedCard = 0; // 선언/초기화
+
+        if (benefitPriority != null && usagePriority != null && memberNo != null && cardNo != null) {
+            // DTO에서 데이터를 추출하여 서비스 호출
+            updatedCard = cardService.updateByBenefitPriorityAndUsagePriority(
+                    benefitPriority
+                    , usagePriority
+                    , memberNo
+                    , cardNo
+            );
+        }
+
+
+        // 업데이트 결과에 따라 응답 반환
+        if (updatedCard > 0) {
+            return ResponseEntity.ok("Card updated successfully.");
+        } else {
+            return ResponseEntity.status(404).body("Card not found.");
+        }
+    }
 }
