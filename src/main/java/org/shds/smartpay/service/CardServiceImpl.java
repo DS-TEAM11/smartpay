@@ -69,19 +69,26 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public int updateByBenefitPriorityAndUsagePriority(
-        Integer benefitPriority
-        , Integer usagePriority
-        , String memberNo
-        , String cardNo
+            List<CardDTO> cardDTOs
     ) {
 
+        int totalUpdated = 0; // 총 업데이트된 카드 수
+        for (CardDTO cardDTO : cardDTOs) {
+            Integer benefitPriority = cardDTO.getBenefitPriority();
+            Integer usagePriority = cardDTO.getUsagePriority();
+            String memberNo = cardDTO.getMemberNo();
+            String cardNo = cardDTO.getCardNo();
 
+            int updatedCard = cardRepository.updateByBenefitPriorityAndUsagePriority(
+                    benefitPriority,
+                    usagePriority,
+                    memberNo,
+                    cardNo
+            );
 
-        return cardRepository.updateByBenefitPriorityAndUsagePriority(
-            benefitPriority
-            , usagePriority
-            , memberNo
-            , cardNo
-        );
+            totalUpdated += updatedCard; // 업데이트된 카드 수 증가
+
+        }
+        return totalUpdated;
     }
 }

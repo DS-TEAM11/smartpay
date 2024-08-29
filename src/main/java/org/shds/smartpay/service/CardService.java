@@ -24,10 +24,5 @@ public interface CardService {
     Map<String, Object> getMemCardInfo(@RequestParam String cardNo, @RequestParam String memberNo);
 
     // update
-    int updateByBenefitPriorityAndUsagePriority(
-        Integer benefitPriority
-        , Integer usagePriority
-        , String memberNo
-        , String cardNo
-    );
+    int updateByBenefitPriorityAndUsagePriority(List<CardDTO> cardDTOs);
 }
