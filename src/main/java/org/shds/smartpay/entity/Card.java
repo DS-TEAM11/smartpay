@@ -39,4 +39,6 @@ public class Card extends BaseEntity {
     public void setTotalCardPrice(int totalCardPrice) {
         this.totalCardPrice = totalCardPrice;
     }
+    private Integer benefitPriority; // 혜택 순위
+    private Integer usagePriority; // 실적 순위
 }
