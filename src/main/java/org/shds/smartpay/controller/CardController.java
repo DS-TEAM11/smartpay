@@ -1,5 +1,7 @@
 package org.shds.smartpay.controller;
 
+import groovy.util.logging.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.shds.smartpay.dto.BinTableDTO;
 import org.shds.smartpay.dto.CardDTO;
 import org.shds.smartpay.entity.Card;
@@ -18,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
+@Log4j2
 @RequestMapping("/api/cards")
 public class CardController {
 
@@ -84,7 +87,7 @@ public class CardController {
         }
 
         // 카드 번호 로깅
-        System.out.println("Received cardNumber: " + cardNumber);
+        log.info("Received cardNumber: " + cardNumber);
 
         Optional<BinTableDTO> binInfo = cardService.getCardCompanyByBin(cardNumber);
         if (binInfo.isPresent()) {
