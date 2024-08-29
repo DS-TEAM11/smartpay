@@ -32,8 +32,6 @@ public class Card extends BaseEntity {
 
     private String cardImage; //카드 이미지 가져오기
     private String memberNo;  // 회원 번호
-    private Integer benefitPriority; // 혜택 순위
-    private Integer usagePriority; // 실적 순위
 
     @Transient
     private int totalCardPrice;  // 이번달 총 결제금액을 추가
