@@ -41,4 +41,5 @@ public class Card extends BaseEntity {
     }
     private Integer benefitPriority; // 혜택 순위
     private Integer usagePriority; // 실적 순위
+    private String cardName;
 }
