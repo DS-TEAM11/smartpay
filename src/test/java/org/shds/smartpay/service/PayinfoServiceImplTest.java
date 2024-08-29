@@ -28,12 +28,12 @@ public class PayinfoServiceImplTest {
     }
 
     @Test
-    public void findByDateOrderByPayDate() {
+    public void findByDateOrderByRegDate() {
 
-        String startDate = null;
-        String endDate = null;
-        String memberNo = "acb944d7-2770-4eb5-a416-d9c1403601e0";
-        String cardNo = null;
+        String startDate = "20240801";
+        String endDate = "20240831";
+        String memberNo = "test";
+        String cardNo = "4221550025523553";
 
         List<PayInfoDTO> result = paymentService.findByDateOrderByRegDate(
             startDate
