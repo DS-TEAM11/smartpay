@@ -51,8 +51,9 @@ public class CardController {
         if (cardInfoOptional.isPresent()) {
             CardInfo cardInfo = cardInfoOptional.get();
             cardDTO.setCardImage(cardInfo.getCardImg());
+            cardDTO.setCardName(cardInfo.getCardName());
         } else {
-            System.out.println("사진 없어요.");
+            System.out.println("X");
         }
 
         // DTO를 엔티티로 변환
@@ -68,6 +69,7 @@ public class CardController {
         return Card.builder()
                 .cardNo(cardDTO.getCardNo())
                 .cardNick(cardDTO.getCardNick())
+                .cardName(cardDTO.getCardName())
                 .isCredit(cardDTO.getIsCredit())
                 .cardPwd(cardDTO.getCardPwd())  // 암호화된 비밀번호 사용
                 .validPeriod(cardDTO.getValidPeriod())
@@ -127,7 +129,7 @@ public class CardController {
                     return cardInfoOpt.map(cardInfo -> CardDTO.builder()
                             .cardNo(card.getCardNo())
                             .cardNick(card.getCardNick())
-                            .cardName(cardInfo.getCardName()) // 카드 이름 추가
+                            .cardName(card.getCardName())
                             .cardCompany(cardInfo.getCardCompany()) // 카드 회사 추가
                             .isCredit(card.getIsCredit())
                             .cardPwd(card.getCardPwd())
