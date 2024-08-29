@@ -68,6 +68,15 @@ dependencies {
 
     // API 유효성 체크
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // sms 인증 sdk
+    implementation group: 'net.nurigo', name: 'javaSDK', version: '2.2'
+
+    // redis 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Netty Native Transport for MacOS
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64'
 }
 
 tasks.named('test') {
