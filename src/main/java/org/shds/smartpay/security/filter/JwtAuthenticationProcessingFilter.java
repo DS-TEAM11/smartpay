@@ -24,6 +24,7 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthenticationProcessingFilter  extends OncePerRequestFilter {
     private static final String NO_CHECK_URL = "/login"; // "/login"으로 들어오는 요청은 Filter 작동 X
+    private static final String LOGOUT_URL = "/member/logout";
 
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
@@ -36,20 +37,33 @@ public class JwtAuthenticationProcessingFilter  extends OncePerRequestFilter {
             filterChain.doFilter(request, response); // "/login" 요청이 들어오면, 다음 필터 호출
             return; // return으로 이후 현재 필터 진행 막기 (안해주면 아래로 내려가서 계속 필터 진행시킴)
         }
+//        log.info("JwtAuthenticationProcessingFilter doFilter 진입하나요?");
+//        System.out.println("JwtAuthenticationProcessingFilter doFilter 진입하나요?");
 
+        // 쿠키에서 리프레시 토큰 추출 - 현재 리액트와의 과정에서는 이렇게 쿠키에서 추출하고 그렇지 않을 때에는 아래에
+        //주석처리해둔 요청헤더에서 추출하는 것을 사용해야 함 즉, 요청헤더방식과 쿠키방식중 골라야함 그때그때마다
+        String refreshToken = jwtService.extractRefreshTokenFromCookie(request)
+                .filter(jwtService::isTokenValid)
+                .orElse(null);
+        System.out.println("refreshToken: " + refreshToken);
+        System.out.println("request.getRequestURI(): "+request.getRequestURI());
         // 사용자 요청 헤더에서 RefreshToken 추출
         // -> RefreshToken이 없거나 유효하지 않다면(DB에 저장된 RefreshToken과 다르다면) null을 반환
         // 사용자의 요청 헤더에 RefreshToken이 있는 경우는, AccessToken이 만료되어 요청한 경우밖에 없다.
         // 따라서, 위의 경우를 제외하면 추출한 refreshToken은 모두 null
-        String refreshToken = jwtService.extractRefreshToken(request)
-                .filter(jwtService::isTokenValid)
-                .orElse(null);
-
+//        String refreshToken = jwtService.extractRefreshToken(request)
+//                .filter(jwtService::isTokenValid)
+//                .orElse(null);
+        if (request.getRequestURI().equals(LOGOUT_URL)) { //로그아웃 요청시에는 리프레시 토큰을 쓰지 않는 쪽으로 돌려야 한다.
+            checkAccessTokenAndAuthentication(request,response, filterChain);
+            return; // return으로 이후 현재 필터 진행 막기 (안해주면 아래로 내려가서 계속 필터 진행시킴)
+        }
         // 리프레시 토큰이 요청 헤더에 존재했다면, 사용자가 AccessToken이 만료되어서
         // RefreshToken까지 보낸 것이므로 리프레시 토큰이 DB의 리프레시 토큰과 일치하는지 판단 후,
         // 일치한다면 AccessToken을 재발급해준다.
         if (refreshToken != null) {
             checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
+            //System.out.println("리프레시 토큰이 들어왔고, 따라서 액세스토큰을 재발급");
             return; // RefreshToken을 보낸 경우에는 AccessToken을 재발급 하고 인증 처리는 하지 않게 하기위해 바로 return으로 필터 진행 막기
         }
 

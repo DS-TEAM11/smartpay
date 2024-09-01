@@ -1,5 +1,8 @@
 package org.shds.smartpay.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.extern.log4j.Log4j2;
@@ -8,14 +11,18 @@ import org.shds.smartpay.dto.PayInfoDTO;
 import org.shds.smartpay.entity.Card;
 import org.shds.smartpay.entity.Member;
 import org.shds.smartpay.security.dto.MemberRegisterDTO;
+import org.shds.smartpay.security.service.JwtService;
 import org.shds.smartpay.service.CardService;
 import org.shds.smartpay.service.MemberService;
 import org.shds.smartpay.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -43,6 +50,7 @@ public class MemberController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
 
     public static class PayPwdRequest {
         @Pattern(regexp = "^\\d{6}$", message = "비밀번호는 6자리 숫자여야 합니다.")
@@ -78,6 +86,39 @@ public class MemberController {
         } else {
             return ResponseEntity.notFound().build();  // 해당 사용자가 없는 경우 404 응답
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("로그아웃 컨트롤러는 들어와지나요? ");
+        // 요청으로부터 쿠키를 받아옴
+        Optional<Cookie> refreshTokenCookie = Arrays.stream(request.getCookies())
+                .filter(cookie -> "refreshToken".equals(cookie.getName()))
+                .findFirst();
+
+        if (refreshTokenCookie.isPresent()) {
+            // 리프레시 토큰 쿠키가 있으면, 해당 쿠키의 만료 시간을 0으로 설정하여 삭제
+            Cookie cookie = refreshTokenCookie.get();
+            cookie.setMaxAge(0);
+            cookie.setPath("/"); // 쿠키의 경로를 설정해줘야 합니다.
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true);
+            response.addCookie(cookie);
+        }
+
+        // 이메일을 통해 회원 조회 후 리프레시 토큰 초기화
+        String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        Member member = memberService.findByEmail(email);
+
+        if (member != null) {
+            member.initRefreshToken();  // 리프레시 토큰 초기화
+            memberService.updateMember(member);  // 회원 정보 업데이트
+            log.info("로그아웃 처리 완료: 이메일 {}", email);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  // 회원 정보가 없을 경우 404 응답
+        }
+
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/getBenefit")
