@@ -2,6 +2,7 @@ package org.shds.smartpay.security.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.shds.smartpay.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,15 +90,65 @@ public class JwtService {
     /**
      * AccessToken + RefreshToken 헤더에 실어서 보내기
      */
+    //요건 기존코드이고 잘 되던거임, 근데 refreshToken에 쿠키설정이 안되던거 같음
+//    public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
+//        try {
+//            response.setStatus(HttpServletResponse.SC_OK);
+//
+//            setAccessTokenHeader(response, accessToken);
+//            setRefreshTokenHeader(response, refreshToken);
+//            response.getWriter().println("OK");
+//            log.info("Access Token, Refresh Token 헤더 설정 완료");
+//        } catch (Exception e) {e.printStackTrace();}
+//    }
+
+    /**
+     * AccessToken + RefreshToken 헤더에 실어서 보내고, RefreshToken을 쿠키에 설정
+     */
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
         try {
             response.setStatus(HttpServletResponse.SC_OK);
 
             setAccessTokenHeader(response, accessToken);
             setRefreshTokenHeader(response, refreshToken);
+
+            // 리프레시 토큰을 쿠키에 설정
+            setRefreshTokenCookie(response, refreshToken);
+
             response.getWriter().println("OK");
-            log.info("Access Token, Refresh Token 헤더 설정 완료");
-        } catch (Exception e) {e.printStackTrace();}
+            log.info("Access Token, Refresh Token 헤더 설정 및 쿠키에 리프레시 토큰 저장 완료");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * RefreshToken을 HttpOnly 쿠키로 설정
+     */
+    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)           // HttpOnly 설정
+                .secure(false)             // HTTPS 환경에서만 전송=true
+                .path("/")                // 애플리케이션 전체에서 쿠키를 사용하도록 설정
+                .maxAge(refreshTokenExpirationPeriod / 1000) // 만료 시간 설정
+                .sameSite("Strict")       // CSRF 공격 방지
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    }
+    /*
+    * RefreshToken을 쿠키에서 삭제하는 명령 날리기
+    * */
+    public void deleteRefreshTokenCookie(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)           // HttpOnly 설정
+                .secure(false)             // HTTPS 환경에서만 전송=true
+                .path("/")                // 애플리케이션 전체에서 쿠키를 사용하도록 설정
+                .maxAge(0)                // 쿠키 즉시 삭제
+                .sameSite("Strict")       // CSRF 공격 방지
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     /**
@@ -160,8 +213,8 @@ public class JwtService {
      */
     @Transactional
     public void updateRefreshToken(String email, String refreshToken) {
-        log.info("리프레시토큰을 업데이틑 하는 과정중 이메일 : {}", email);
-        log.info("리프레시토큰을 업데이틑 하는 과정중 리프레시토큰 : {}", refreshToken);
+//        log.info("리프레시토큰을 업데이틑 하는 과정중 이메일 : {}", email);
+//        log.info("리프레시토큰을 업데이틑 하는 과정중 리프레시토큰 : {}", refreshToken);
         memberRepository.findByEmail(email)
                 .ifPresentOrElse(
                         member -> member.updateRefreshToken(refreshToken),
@@ -177,5 +230,16 @@ public class JwtService {
             log.error("유효하지 않은 토큰입니다. {}", e.getMessage());
             return false;
         }
+    }
+
+    public Optional<String> extractRefreshTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals("refreshToken")) {
+                    return Optional.of(cookie.getValue());
+                }
+            }
+        }
+        return Optional.empty();
     }
 }
