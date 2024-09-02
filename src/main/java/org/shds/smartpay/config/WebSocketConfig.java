@@ -13,7 +13,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     //메세지브로커 등록
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic", "/queue");
+        registry.enableSimpleBroker( "/queue","/topic");
         registry.setApplicationDestinationPrefixes("/");
     }
             /*
@@ -31,7 +31,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // ws -> endpoint(요청이 들어오는 서버 클래스)
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("*") //CORS (일단은 interceptor X)
+                .setAllowedOrigins("http://localhost:3000/") //CORS (일단은 interceptor X)
                 .withSockJS();
     }
     //실제 경로는 /ws/topic/~

@@ -57,8 +57,8 @@ public class SecurityConfig {
             auth.requestMatchers("/", "/index.html", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
                     .requestMatchers("/member/signup", "/oauth2/sign-up", "/login", "/logout", "/api/payment/done", "/seller", "/seller/**").permitAll() // 특정 페이지 접근 허용
                     //.anyRequest().authenticated(); // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
-                    .requestMatchers("/member/jwt-test", "/member/tetest", "/member/logout").hasRole("USER")
                     .requestMatchers("/ws/**").permitAll()  // WebSocket 엔드포인트는 인증없이 접근 가능하도록 설정
+                    .requestMatchers("/member/jwt-test", "/member/tetest", "/member/logout").hasRole("USER")
                     .anyRequest().permitAll();
             //.anyRequest().authenticated();
 
@@ -100,8 +100,8 @@ public class SecurityConfig {
     //Cors 설정 Security로 통일
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        System.out.println("########### 여기서 걸린거임 ########");
-        log.info("########### 여기서 걸린거임 ########");
+//        System.out.println("########### 여기서 걸린거임 ########");
+//        log.info("########### 여기서 걸린거임 ########");
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3000"); // React 앱의 주소
         configuration.addAllowedMethod("*");
@@ -112,8 +112,6 @@ public class SecurityConfig {
         configuration.addAllowedHeader("Key");
         configuration.addAllowedHeader("Authorization");
         configuration.addAllowedHeader("Authorization-Refresh");
-
-//        configuration.addAllowedHeader("Origin, X-Requested-With, Content-Type, Accept, Key, Authorization, Authorization-refresh");
         configuration.setAllowCredentials(true);
         configuration.addExposedHeader("Authorization");  // 헤더 노출 설정
         configuration.addExposedHeader("Authorization-Refresh");  // 헤더 노출 설정
