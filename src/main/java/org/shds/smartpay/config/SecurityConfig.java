@@ -51,15 +51,16 @@ public class SecurityConfig {
 //        http.headers(headers -> headers.httpStrictTransportSecurity(s->{}).disable());
 
         // CORS 설정 추가
-        http.cors(cors -> cors.disable());
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         http.authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/","/index.html","/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
-                    .requestMatchers("/member/signup", "/oauth2/sign-up", "/login","/logout", "/api/payment/done").permitAll() // 특정 페이지 접근 허용
+            auth.requestMatchers("/", "/index.html", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
+                    .requestMatchers("/member/signup", "/oauth2/sign-up", "/login", "/logout", "/api/payment/done", "/seller", "/seller/**").permitAll() // 특정 페이지 접근 허용
                     //.anyRequest().authenticated(); // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
-                    .requestMatchers("/member/jwt-test","/member/tetest","/member/logout").hasRole("USER")
+                    .requestMatchers("/member/jwt-test", "/member/tetest", "/member/logout").hasRole("USER")
+                    .requestMatchers("/ws/**").permitAll()  // WebSocket 엔드포인트는 인증없이 접근 가능하도록 설정
                     .anyRequest().permitAll();
-                    //.anyRequest().authenticated();
+            //.anyRequest().authenticated();
 
         });
 
@@ -95,36 +96,32 @@ public class SecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.addAllowedOrigin("http://localhost:3000"); // React 앱의 주소
-//        configuration.addAllowedMethod("*");
-//        configuration.addAllowedHeader("*");
-//        configuration.setAllowCredentials(true);
-//        configuration.addExposedHeader("Authorization");  // 헤더 노출 설정
-//        configuration.addExposedHeader("Authorization-Refresh");  // 헤더 노출 설정
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
 
-    // CORS 설정을 위한 Bean 정의
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.addAllowedOrigin("http://localhost:3000"); // React 앱의 주소
-//        configuration.addAllowedMethod("*");
-//        configuration.addAllowedHeader("*");
-//        configuration.setAllowCredentials(true);
-//        configuration.addExposedHeader("Authorization");  // 헤더 노출 설정
-//        configuration.addExposedHeader("Authorization-Refresh");  // 헤더 노출 설정
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
+    //Cors 설정 Security로 통일
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        System.out.println("########### 여기서 걸린거임 ########");
+        log.info("########### 여기서 걸린거임 ########");
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:3000"); // React 앱의 주소
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("Origin");
+        configuration.addAllowedHeader("X-Requested-With");
+        configuration.addAllowedHeader("Content-Type");
+        configuration.addAllowedHeader("Accept");
+        configuration.addAllowedHeader("Key");
+        configuration.addAllowedHeader("Authorization");
+        configuration.addAllowedHeader("Authorization-Refresh");
+
+//        configuration.addAllowedHeader("Origin, X-Requested-With, Content-Type, Accept, Key, Authorization, Authorization-refresh");
+        configuration.setAllowCredentials(true);
+        configuration.addExposedHeader("Authorization");  // 헤더 노출 설정
+        configuration.addExposedHeader("Authorization-Refresh");  // 헤더 노출 설정
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -137,7 +134,6 @@ public class SecurityConfig {
      * FormLogin(기존 스프링 시큐리티 로그인)과 동일하게 DaoAuthenticationProvider 사용
      * UserDetailsService는 커스텀 LoginService로 등록
      * 또한, FormLogin과 동일하게 AuthenticationManager로는 구현체인 ProviderManager 사용(return ProviderManager)
-     *
      */
     @Bean
     public AuthenticationManager authenticationManager() {
@@ -178,6 +174,7 @@ public class SecurityConfig {
         customJsonUsernamePasswordLoginFilter.setAuthenticationFailureHandler(loginFailureHandler());
         return customJsonUsernamePasswordLoginFilter;
     }
+
     @Bean
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
         JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, memberRepository);
