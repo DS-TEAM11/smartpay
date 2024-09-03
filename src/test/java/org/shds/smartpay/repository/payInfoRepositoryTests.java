@@ -106,4 +106,18 @@ public class payInfoRepositoryTests {
         PayInfo payinfo = payInfoRepository.findByOrderNo("pay_info 테이블 저장");
         System.out.println(payinfo);
     }
+
+    @Test
+    public void findPageTest() {
+        String memberNo = "test";
+        String startDate = "20240801";
+        String endDate = "20240831";
+        int page = 3;
+        int size = 10;
+        List<PayInfo> result = payInfoRepository.findPayInfoByDateAndMemberNoWithPaging(startDate, endDate, memberNo, page, size);
+        System.out.println("#############################################");
+        System.out.println(result);
+        System.out.println(result.size());
+        System.out.println("#############################################");
+    }
 }
