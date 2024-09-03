@@ -68,8 +68,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         // 일치한다면 AccessToken을 재발급해준다.
         if (refreshToken != null) {
             checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
-            //System.out.println("리프레시 토큰이 들어왔고, 따라서 액세스토큰을 재발급");
-            return; // RefreshToken을 보낸 경우에는 AccessToken을 재발급 하고 인증 처리는 하지 않게 하기위해 바로 return으로 필터 진행 막기
+            System.out.println("리프레시 토큰이 들어왔고, 따라서 액세스토큰을 재발급");
+            //return; // RefreshToken을 보낸 경우에는 AccessToken을 재발급 하고 인증 처리는 하지 않게 하기위해 바로 return으로 필터 진행 막기
         }
 
         // RefreshToken이 없거나 유효하지 않다면, AccessToken을 검사하고 인증을 처리하는 로직 수행
