@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface PayInfoRepository extends JpaRepository<PayInfo, Long> {
+public interface PayInfoRepository extends JpaRepository<PayInfo, Long>, PayInfoRepositoryCustom {
     PayInfo findByOrderNo(String orderNo);
 
     // 날짜에 따른 결제 정보 조회

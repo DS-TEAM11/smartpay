@@ -254,6 +254,73 @@ public class PaymentServiceImpl implements PaymentService {
         return result;
     }
 
+    @Override
+    public List<PayInfoDTO> findByDateOrderByRegDatePage(String startDate, String endDate, String memberNo, String cardNo, int page, int size) {
+        List<PayInfo> payInfos;
+        List<Object[]> cardList;
+
+        // 카드 목록 초기화
+        if (cardNo == null || cardNo.isEmpty()) {
+            cardList = cardInfoRepository.findCardsWithCardInfo(memberNo);
+        } else {
+            cardList = cardInfoRepository.findBymemberNoAndcardCode(cardNo, memberNo);
+        }
+
+        LocalDate now = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+        // 날짜 범위 설정
+        if (startDate == null || startDate.isEmpty() || endDate == null || endDate.isEmpty()) {
+            LocalDate startDateFormat = now.minusDays(7);
+            startDate = formatter.format(startDateFormat);
+            endDate = formatter.format(now);
+        }
+
+        // 페이징 처리된 PayInfo 조회
+        payInfos = payInfoRepository.findPayInfoByDateAndMemberNoWithPaging(
+                startDate,
+                endDate,
+                memberNo,
+                page,
+                size
+        );
+
+        // PayInfo를 PayInfoDTO로 변환
+        return payInfos.stream()
+                .map(payInfo -> {
+                    Object[] matchingCardInfo = cardList.stream()
+                            .filter(cardInfo -> ((Card) cardInfo[0]).getCardNo().equals(payInfo.getCardNo()))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (matchingCardInfo == null) {
+                        return null;
+                    }
+
+                    Card matchingCard = (Card) matchingCardInfo[0];
+                    CardInfo matchingCardInfoDetails = (CardInfo) matchingCardInfo[1];
+
+                    return PayInfoDTO.builder()
+                            .orderNo(payInfo.getOrderNo())
+                            .product(payInfo.getProduct())
+                            .price(payInfo.getPrice())
+                            .cardNo(payInfo.getCardNo())
+                            .cardCode(payInfo.getCardCode())
+                            .getIsAi(payInfo.getIsAi())
+                            .payDate(payInfo.getPayDate())
+                            .savePrice(payInfo.getSavePrice())
+                            .saveType(payInfo.getSaveType())
+                            .franchiseCode(payInfo.getFranchiseCode())
+                            .franchiseName(payInfo.getFranchiseName())
+                            .memberNo(payInfo.getMemberNo())
+                            .cardImage(matchingCard.getCardImage())
+                            .cardName(matchingCardInfoDetails.getCardName())
+                            .build();
+                })
+                .filter(dto -> dto != null)
+                .collect(Collectors.toList());
+    }
+
     //카테고리에 따른 랭크
     @Override
     public List<Object[]> cardRankList(@RequestParam String category) {

@@ -40,4 +40,6 @@ public interface PaymentService {
      * @return
      */
     List<PayInfoDTO> findByDateOrderByRegDate(String startDate, String endDate, String memberNo, String cardNo);
+
+    List<PayInfoDTO> findByDateOrderByRegDatePage(String startDate, String endDate, String memberNo, String cardNo, int page, int size);
 }
