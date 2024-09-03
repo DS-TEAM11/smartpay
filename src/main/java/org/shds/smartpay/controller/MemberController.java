@@ -11,14 +11,11 @@ import org.shds.smartpay.dto.PayInfoDTO;
 import org.shds.smartpay.entity.Card;
 import org.shds.smartpay.entity.Member;
 import org.shds.smartpay.security.dto.MemberRegisterDTO;
-import org.shds.smartpay.security.service.JwtService;
 import org.shds.smartpay.service.CardService;
 import org.shds.smartpay.service.MemberService;
 import org.shds.smartpay.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,7 +33,7 @@ import java.util.stream.Collectors;
 @Controller
 @Log4j2
 @RequestMapping("/member/")
-@CrossOrigin(origins = {"http://localhost:3000/","http://localhost/"})
+@CrossOrigin(origins = {"http://localhost:3000/", "http://localhost/"})
 public class MemberController {
 
     @Autowired
@@ -51,25 +48,6 @@ public class MemberController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
-    public static class PayPwdRequest {
-        @Pattern(regexp = "^\\d{6}$", message = "비밀번호는 6자리 숫자여야 합니다.")
-        private String payPwd;
-        private String memberNo;
-
-        public String getPayPwd() {
-            return payPwd;
-        }
-
-        public String getMemberNo() {
-            return memberNo;
-        }
-
-        public void setPayPwd(String payPwd) {
-            this.payPwd = payPwd;
-        }
-    }
-
     @PostMapping("/signup")
     public ResponseEntity<Member> registerMember(@RequestBody MemberRegisterDTO memberRegisterDTO) throws Exception {
         Member registeredMember = memberService.registerNewMember(memberRegisterDTO);
@@ -81,6 +59,8 @@ public class MemberController {
     public ResponseEntity<String> findMemberNo(@AuthenticationPrincipal UserDetails userDetails) {
         String email = userDetails.getUsername();  // JWT에서 이메일(사용자 이름)을 가져옴
         Member member = memberService.findByEmail(email);
+        System.out.println(userDetails);
+        System.out.println("#################");
         if (member != null) {
             return ResponseEntity.ok(String.valueOf(member.getMemberNo()));  // memberNo 반환
         } else {
@@ -178,7 +158,6 @@ public class MemberController {
         }
     }
 
-
     @PostMapping("/setPaypwd")
     public ResponseEntity<String> setPaypwd(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody PayPwdRequest request) {
         //String email = userDetails.getUsername();
@@ -214,8 +193,6 @@ public class MemberController {
         }
     }
 
-
-
     @GetMapping("/checkSms")
     @ResponseBody
     public String sendVerificationCode(@RequestParam String phone) {
@@ -248,8 +225,6 @@ public class MemberController {
         return String.valueOf(code);
     }
 
-
-
     @GetMapping("/jwt-test")
     public ResponseEntity<String> jwtTest() {
         return ResponseEntity.ok("jwtTest 요청 성공");
@@ -265,7 +240,7 @@ public class MemberController {
 
         log.info("exMember........");
 
-        log.info("clubAuthMemberDTO : "+memberDTO);
+        log.info("clubAuthMemberDTO : " + memberDTO);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -292,5 +267,23 @@ public class MemberController {
                 .build();
 
         return ResponseEntity.ok(memberDto);
+    }
+
+    public static class PayPwdRequest {
+        @Pattern(regexp = "^\\d{6}$", message = "비밀번호는 6자리 숫자여야 합니다.")
+        private String payPwd;
+        private String memberNo;
+
+        public String getPayPwd() {
+            return payPwd;
+        }
+
+        public void setPayPwd(String payPwd) {
+            this.payPwd = payPwd;
+        }
+
+        public String getMemberNo() {
+            return memberNo;
+        }
     }
 }
