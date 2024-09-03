@@ -1,6 +1,5 @@
 package org.shds.smartpay.controller;
 
-import groovy.util.logging.Slf4j;
 import lombok.extern.log4j.Log4j2;
 import org.shds.smartpay.dto.BinTableDTO;
 import org.shds.smartpay.dto.CardDTO;
@@ -178,11 +177,7 @@ public class CardController {
             @RequestBody List<CardDTO> cardDTOs) {
 
         int updatedCard = 0; // 선언/초기화
-
-
         updatedCard = cardService.updateByBenefitPriorityAndUsagePriority(cardDTOs);
-
-
 
         // 업데이트 결과에 따라 응답 반환
         if (updatedCard > 0) {
