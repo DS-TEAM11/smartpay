@@ -20,11 +20,6 @@ public class ChatGptController {
         this.chatClient = chatClient;
     }
 
-    @GetMapping("test")
-    public String test() {
-        return "Test";
-    }
-
     @GetMapping("/call")
     public String call() {
         String cardInfo = "";

@@ -46,4 +46,22 @@ public class PayinfoServiceImplTest {
         System.out.println(result);
         System.out.println("---------------------------");
     }
+
+    @Test
+    public void findByDateOrderByRegDatePage() {
+
+        String startDate = "20240801";
+        String endDate = "20240831";
+        String memberNo = "test";
+        String cardNo = "";
+        int page = 1;
+        int size = 10;
+
+        List<PayInfoDTO> result = paymentService.findByDateOrderByRegDatePage(startDate, endDate, memberNo, cardNo, page, size);
+
+        System.out.println("###########################################################");
+        System.out.println(result);
+        System.out.println(result.size());
+        System.out.println("###########################################################");
+    }
 }

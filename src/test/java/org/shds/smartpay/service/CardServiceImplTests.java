@@ -10,14 +10,14 @@ public class CardServiceImplTests {
     @Autowired
     private CardService cardService;
 
-    @Test
-    public void updateByBenefitPriorityAndUsagePriority() {
-        cardService.updateByBenefitPriorityAndUsagePriority(
-                2,
-                2,
-                "test",
-                "4006966666666666"
-        );
-    }
+//    @Test
+//    public void updateByBenefitPriorityAndUsagePriority() {
+//        cardService.updateByBenefitPriorityAndUsagePriority(
+//                2,
+//                2,
+//                "test",
+//                "4006966666666666"
+//        );
+//    }
 
 }

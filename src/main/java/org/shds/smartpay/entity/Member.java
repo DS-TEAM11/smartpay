@@ -53,4 +53,9 @@ public class Member extends BaseEntity{
         this.refreshToken = updateRefreshToken;
     }
 
+    // 리프레시 토큰을 초기화하는 메소드
+    public void initRefreshToken() {
+        this.refreshToken = null;  // 리프레시 토큰을 null로 설정
+    }
+
 }
