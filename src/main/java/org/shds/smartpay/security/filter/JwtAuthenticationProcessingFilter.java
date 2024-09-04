@@ -38,7 +38,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 //        System.out.println(request.getRequestURI());
 //        System.out.println(request.getRequestURI().contains("/ws/"));
 //        System.out.println("JWT 필터 진입했음");
-        if (request.getRequestURI().equals(NO_CHECK_URL) || request.getRequestURI().contains("/ws") || request.getRequestURI().contains("/seller")) {
+        if (request.getRequestURI().equals(NO_CHECK_URL) || request.getRequestURI().contains("/ws") || request.getRequestURI().contains("/seller")|| request.getRequestURI().contains("/oauth2")) {
             filterChain.doFilter(request, response); // "/login" 요청이 들어오면, 다음 필터 호출
             return; // return으로 이후 현재 필터 진행 막기 (안해주면 아래로 내려가서 계속 필터 진행시킴)
         }
