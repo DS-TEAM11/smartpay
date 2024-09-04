@@ -106,14 +106,12 @@ public class PaymentController {
         , @RequestParam(required = false) String endDate
         , @RequestParam String memberNo
         , @RequestParam(required = false) String cardNo
-        , @RequestParam(required = false) int page
-        , @RequestParam(required = false) int size
 
         ) {
         System.out.println("되나?");
         try {
             // payDate, memberNo, cardNo를 이용하여 최근 결제 내역 조회
-            List<PayInfoDTO> payInfoDTOs = paymentService.findByDateOrderByRegDatePage(startDate, endDate, memberNo, cardNo, page, size);
+            List<PayInfoDTO> payInfoDTOs = paymentService.findByDateOrderByRegDate(startDate, endDate, memberNo, cardNo);
             System.out.println(payInfoDTOs);
             return ResponseEntity.ok(payInfoDTOs); // 조회된 결제 내역 반환
         } catch (Exception e) {
