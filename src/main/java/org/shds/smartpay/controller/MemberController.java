@@ -9,7 +9,9 @@ import lombok.extern.log4j.Log4j2;
 import org.shds.smartpay.dto.MemberDTO;
 import org.shds.smartpay.dto.PayInfoDTO;
 import org.shds.smartpay.entity.Card;
+import org.shds.smartpay.entity.CardInfo;
 import org.shds.smartpay.entity.Member;
+import org.shds.smartpay.repository.CardInfoRepository;
 import org.shds.smartpay.security.dto.MemberRegisterDTO;
 import org.shds.smartpay.security.service.JwtService;
 import org.shds.smartpay.service.CardService;
@@ -50,6 +52,11 @@ public class MemberController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CardInfoRepository CardInfoRepository;
+    @Autowired
+    private CardInfoRepository cardInfoRepository;
 
 
     public static class PayPwdRequest {
@@ -151,8 +158,30 @@ public class MemberController {
                 // 카드에 총 결제금액을 추가
                 card.setTotalCardPrice(totalCardPrice);
 
+                Optional<CardInfo> cardInfo = cardInfoRepository.findByCardCode(card.getCardCode());
+
+                // Optional을 CardInfo로 변환
+                CardInfo info = cardInfo.orElseThrow(() -> new RuntimeException("CardInfo not found"));
+
+                // 카드 정보에 목표 실적 추가
+                Map<String, Object> cardData = new HashMap<>();
+                cardData.put("cardNo", card.getCardNo());
+                cardData.put("totalCardPrice", card.getTotalCardPrice());
+
+                // cardGoal1, cardGoal2, cardGoal3이 null이 아닌 경우만 추가
+                if (info.getCardGoal1() != null) {
+                    cardData.put("cardGoal1", info.getCardGoal1());
+                }
+                if (info.getCardGoal2() != null) {
+                    cardData.put("cardGoal2", info.getCardGoal2());
+                }
+                if (info.getCardGoal3() != null) {
+                    cardData.put("cardGoal3", info.getCardGoal3());
+                }
+
                 // 카드별로 필터링된 payInfoDTOs 리스트를 담아줌
                 response.put(card.getCardNo(), filteredPayInfoDTOs);
+                response.put("cardData_" + card.getCardNo(), cardData);
             }
 
             int totalSavePrice = allPayInfo.stream()

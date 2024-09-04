@@ -33,5 +33,10 @@ public class CardInfo {
     private String cardLink;
     //신용카드(0:다른카드. 1:신용카드)
     private int isCredit;
-
+    //카드실적목표1
+    private String cardGoal1;
+    //카드실적목표2
+    private String cardGoal2;
+    //카드실적목표3
+    private String cardGoal3;
 }
