@@ -3,6 +3,7 @@ package org.shds.smartpay.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.junit.jupiter.api.Test;
+import org.shds.smartpay.dto.MyStaticDTO;
 import org.shds.smartpay.entity.Card;
 import org.shds.smartpay.entity.Card;
 import org.shds.smartpay.entity.PayInfo;
@@ -119,5 +120,18 @@ public class payInfoRepositoryTests {
         System.out.println(result);
         System.out.println(result.size());
         System.out.println("#############################################");
+    }
+
+    @Test
+    public void findMonthlySummaryTest() {
+        String memberNo = "test";
+        List<Object[]> result = payInfoRepository.getPaymentDetails(memberNo);
+
+        System.out.println("###############################################");
+        System.out.println(result);
+        for (Object[] row: result) {
+            System.out.println(Arrays.toString(row));
+        }
+        System.out.println("###############################################");
     }
 }

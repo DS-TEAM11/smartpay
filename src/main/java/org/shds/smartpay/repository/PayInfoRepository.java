@@ -1,5 +1,6 @@
 package org.shds.smartpay.repository;
 
+import org.shds.smartpay.dto.MyStaticDTO;
 import org.shds.smartpay.entity.PayInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +10,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface PayInfoRepository extends JpaRepository<PayInfo, Long>, PayInfoRepositoryCustom {
     PayInfo findByOrderNo(String orderNo);
@@ -48,4 +50,60 @@ public interface PayInfoRepository extends JpaRepository<PayInfo, Long>, PayInfo
                  and p.saveType = :saveType 
             """)
     Long sumSavePriceForCurrentMonth(@Param("saveType") int saveType);
+
+    @Query(value = """
+        WITH current_month_total AS (
+            SELECT 
+                SUM(price) AS total_price
+            FROM 
+                pay_info 
+            WHERE 
+                member_no = :memberNo
+                AND pay_date BETWEEN DATE_FORMAT(CURDATE(), '%Y%m01') AND LAST_DAY(CURDATE())
+        ),
+        last_month_total AS (
+            SELECT 
+                SUM(price) AS total_price
+            FROM 
+                pay_info 
+            WHERE 
+                member_no = :memberNo
+                AND pay_date BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH, '%Y%m01') AND LAST_DAY(CURDATE() - INTERVAL 1 MONTH)
+        )
+        SELECT
+            franchise_code as franchiseCode,
+            
+            -- 이번 달의 결제 총액
+            SUM(CASE 
+                WHEN pay_date BETWEEN DATE_FORMAT(CURDATE(), '%Y%m01') AND LAST_DAY(CURDATE()) 
+                THEN price 
+                ELSE 0 
+            END) AS thisMonth,
+
+            -- 지난 달의 결제 총액
+            SUM(CASE 
+                WHEN pay_date BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH, '%Y%m01') AND LAST_DAY(CURDATE() - INTERVAL 1 MONTH) 
+                THEN price 
+                ELSE 0 
+            END) AS lastMonth,
+
+            -- 이번 달의 전체 총액
+            (SELECT total_price FROM current_month_total) AS thisMonthTotal,
+
+            -- 지난 달의 전체 총액
+            (SELECT total_price FROM last_month_total) AS lastMonthTotal
+
+        FROM
+            pay_info
+        WHERE
+            member_no = :memberNo
+            AND (
+                pay_date BETWEEN DATE_FORMAT(CURDATE(), '%Y%m01') AND LAST_DAY(CURDATE())
+                OR
+                pay_date BETWEEN DATE_FORMAT(CURDATE() - INTERVAL 1 MONTH, '%Y%m01') AND LAST_DAY(CURDATE() - INTERVAL 1 MONTH)
+            )
+        GROUP BY
+            franchise_code
+        """, nativeQuery = true)
+    List<Object[]> getPaymentDetails(@Param("memberNo") String memberNo);
 }

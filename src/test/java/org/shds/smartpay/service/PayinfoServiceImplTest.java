@@ -1,12 +1,14 @@
 package org.shds.smartpay.service;
 
 import org.junit.jupiter.api.Test;
+import org.shds.smartpay.dto.MyStaticDTO;
 import org.shds.smartpay.dto.PayInfoDTO;
 import org.shds.smartpay.entity.PayInfo;
 import org.shds.smartpay.repository.PayInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest
@@ -64,4 +66,6 @@ public class PayinfoServiceImplTest {
         System.out.println(result.size());
         System.out.println("###########################################################");
     }
+
+
 }
