@@ -136,11 +136,30 @@ public class MemberController {
     }
 
     @GetMapping("/getBenefit")
-    public ResponseEntity<Map<String, Object>> getPayInfo(@RequestParam String memberNo) {
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getPayInfo(
+            @RequestParam String memberNo,
+            @RequestParam(required = false, defaultValue = "current") String month) {
         try {
+            System.out.println(memberNo);
+            System.out.println(month);
             LocalDate now = LocalDate.now();
-            String startDate = now.withDayOfMonth(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            String endDate = now.withDayOfMonth(now.lengthOfMonth()).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            LocalDate firstDayOfMonth;
+            LocalDate lastDayOfMonth;
+
+            // month 파라미터가 "prev"이면 이전 달의 날짜 범위를 계산
+            if (month.equals("prev")) {
+                firstDayOfMonth = now.minusMonths(1).withDayOfMonth(1);
+                lastDayOfMonth = now.minusMonths(1).withDayOfMonth(now.minusMonths(1).lengthOfMonth());
+            } else {
+                // "current" 또는 그 외의 값이면 이번 달 날짜 범위를 계산
+                firstDayOfMonth = now.withDayOfMonth(1);
+                lastDayOfMonth = now.withDayOfMonth(now.lengthOfMonth());
+            }
+
+            // 포맷팅된 시작일과 종료일
+            String startDate = firstDayOfMonth.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String endDate = lastDayOfMonth.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
             List<Card> cards = cardService.getCardsByMemberNo(memberNo);
 
@@ -174,6 +193,7 @@ public class MemberController {
                 Map<String, Object> cardData = new HashMap<>();
                 cardData.put("cardNo", card.getCardNo());
                 cardData.put("totalCardPrice", card.getTotalCardPrice());
+                cardData.put("cardCompany",info.getCardCompany());
 
                 // cardGoal1, cardGoal2, cardGoal3이 null이 아닌 경우만 추가
                 if (info.getCardGoal1() != null) {
@@ -206,6 +226,7 @@ public class MemberController {
             response.put("totalSavePrice", totalSavePrice);
             response.put("totalDiscountPrice", totalDiscountPrice);
             response.put("totalBenefitPrice", totalBenefitPrice);
+            System.out.println(response);
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -213,6 +234,86 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
+//    @GetMapping("/getBenefit")
+//    public ResponseEntity<Map<String, Object>> getPayInfo(@RequestParam String memberNo) {
+//        try {
+//            LocalDate now = LocalDate.now();
+//            String startDate = now.withDayOfMonth(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//            String endDate = now.withDayOfMonth(now.lengthOfMonth()).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//
+//            List<Card> cards = cardService.getCardsByMemberNo(memberNo);
+//
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("cards", cards);
+//
+//            List<PayInfoDTO> allPayInfo = new ArrayList<>();
+//            for (Card card : cards) {
+//                List<PayInfoDTO> payInfoDTOs = paymentService.findByDateOrderByRegDate(startDate, endDate, memberNo, card.getCardNo());
+//
+//                // getIsAi가 true인 요소만 필터링
+//                List<PayInfoDTO> filteredPayInfoDTOs = payInfoDTOs.stream()
+//                        .filter(PayInfoDTO::isGetIsAi)
+//                        .collect(Collectors.toList());
+//                allPayInfo.addAll(filteredPayInfoDTOs);
+//
+//                // 카드별 총 결제금액 계산 (getIsAi 여부와 상관없이 모든 결제 내역의 price를 더함)
+//                int totalCardPrice = payInfoDTOs.stream()
+//                        .mapToInt(PayInfoDTO::getPrice)
+//                        .sum();
+//
+//                // 카드에 총 결제금액을 추가
+//                card.setTotalCardPrice(totalCardPrice);
+//
+//                Optional<CardInfo> cardInfo = cardInfoRepository.findByCardCode(card.getCardCode());
+//
+//                // Optional을 CardInfo로 변환
+//                CardInfo info = cardInfo.orElseThrow(() -> new RuntimeException("CardInfo not found"));
+//
+//                // 카드 정보에 목표 실적 추가
+//                Map<String, Object> cardData = new HashMap<>();
+//                cardData.put("cardNo", card.getCardNo());
+//                cardData.put("totalCardPrice", card.getTotalCardPrice());
+//
+//                // cardGoal1, cardGoal2, cardGoal3이 null이 아닌 경우만 추가
+//                if (info.getCardGoal1() != null) {
+//                    cardData.put("cardGoal1", info.getCardGoal1());
+//                }
+//                if (info.getCardGoal2() != null) {
+//                    cardData.put("cardGoal2", info.getCardGoal2());
+//                }
+//                if (info.getCardGoal3() != null) {
+//                    cardData.put("cardGoal3", info.getCardGoal3());
+//                }
+//
+//                // 카드별로 필터링된 payInfoDTOs 리스트를 담아줌
+//                response.put(card.getCardNo(), filteredPayInfoDTOs);
+//                response.put("cardData_" + card.getCardNo(), cardData);
+//            }
+//
+//            int totalSavePrice = allPayInfo.stream()
+//                    .filter(dto -> dto.getSaveType() != null && dto.getSaveType() == 0)
+//                    .mapToInt(dto -> dto.getSavePrice() != null ? dto.getSavePrice() : 0)
+//                    .sum();
+//
+//            int totalDiscountPrice = allPayInfo.stream()
+//                    .filter(dto -> dto.getSaveType() != null && dto.getSaveType() == 1)
+//                    .mapToInt(dto -> dto.getSavePrice() != null ? dto.getSavePrice() : 0)
+//                    .sum();
+//
+//            int totalBenefitPrice = totalSavePrice + totalDiscountPrice;
+//
+//            response.put("totalSavePrice", totalSavePrice);
+//            response.put("totalDiscountPrice", totalDiscountPrice);
+//            response.put("totalBenefitPrice", totalBenefitPrice);
+//
+//            return ResponseEntity.ok(response);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
 
 
     @PostMapping("/setPaypwd")
