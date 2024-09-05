@@ -84,6 +84,13 @@ public class MemberController {
         return ResponseEntity.ok(registeredMember);
     }
 
+    @GetMapping("/checkEmail")
+    public ResponseEntity<Boolean> checkEmail(@RequestParam String email){
+        boolean isDuplicate = memberService.isEmailDuplicate(email);
+        return ResponseEntity.ok(isDuplicate);
+    }
+
+
     @GetMapping("/findMember")
     public ResponseEntity<String> findMemberNo(@AuthenticationPrincipal UserDetails userDetails) {
         String email = userDetails.getUsername();  // JWT에서 이메일(사용자 이름)을 가져옴
@@ -243,6 +250,17 @@ public class MemberController {
         }
     }
 
+    @GetMapping("/findByPhone")
+    public ResponseEntity<MemberDTO> findByPhone(@RequestParam String phone){
+        Member member = memberService.findByPhone(phone);
+        if(member != null){
+            MemberDTO memberDTO = new MemberDTO();
+            memberDTO.setEmail(member.getEmail());
+            return ResponseEntity.ok(memberDTO);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
 
 
     @GetMapping("/checkSms")
@@ -276,7 +294,6 @@ public class MemberController {
         int code = random.nextInt(8999) + 1000;
         return String.valueOf(code);
     }
-
 
 
     @GetMapping("/jwt-test")

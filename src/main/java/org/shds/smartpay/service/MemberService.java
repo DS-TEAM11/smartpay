@@ -11,4 +11,6 @@ public interface MemberService {
     Member findByMemberNo(String memberNo);
     boolean verifyPayPwd(String memberNo, String payPwd);
     boolean isPaypwdEmpty(String memberNo);
+    boolean isEmailDuplicate(String email);
+    Member findByPhone(String phone);
 }
