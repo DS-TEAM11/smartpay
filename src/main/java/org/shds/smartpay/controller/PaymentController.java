@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 
 @RestController
-@RequestMapping("/api/payment/")
+@RequestMapping("/api/payment")
 @Log4j2
 @RequiredArgsConstructor
 public class PaymentController {
@@ -122,6 +122,7 @@ public class PaymentController {
     public ResponseEntity<List<MyStaticDTO>> myStatic(
         @RequestParam String memberNo
     ) {
+        System.out.println("static");
         try {
             List<MyStaticDTO> myStaticDTOs = paymentService.getPaymentDetails(memberNo);
             return ResponseEntity.ok(myStaticDTOs); // 조회된 결제 내역 반환
