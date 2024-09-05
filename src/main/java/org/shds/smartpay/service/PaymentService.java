@@ -1,5 +1,6 @@
 package org.shds.smartpay.service;
 
+import org.shds.smartpay.dto.MyStaticDTO;
 import org.shds.smartpay.dto.PayInfoDTO;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.shds.smartpay.entity.PayInfo;
@@ -42,4 +43,6 @@ public interface PaymentService {
     List<PayInfoDTO> findByDateOrderByRegDate(String startDate, String endDate, String memberNo, String cardNo);
 
     List<PayInfoDTO> findByDateOrderByRegDatePage(String startDate, String endDate, String memberNo, String cardNo, int page, int size);
+
+    List<MyStaticDTO> getPaymentDetails(String memberNo);
 }
