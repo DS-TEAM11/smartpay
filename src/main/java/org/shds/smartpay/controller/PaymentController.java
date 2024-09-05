@@ -119,12 +119,11 @@ public class PaymentController {
     }
 
     @GetMapping("/statics")
-    public ResponseEntity<List<MyStaticDTO>> myStatic(
+    public ResponseEntity<List<Map<String, MyStaticDTO>>> myStatic(
         @RequestParam String memberNo
     ) {
-        System.out.println("static");
         try {
-            List<MyStaticDTO> myStaticDTOs = paymentService.getPaymentDetails(memberNo);
+            List<Map<String, MyStaticDTO>> myStaticDTOs = paymentService.getPaymentDetails(memberNo);
             return ResponseEntity.ok(myStaticDTOs); // 조회된 결제 내역 반환
         } catch (Exception e) {
             // 예외 처리

@@ -8,6 +8,7 @@ import org.shds.smartpay.entity.PayInfo;
 import java.util.List;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -44,5 +45,5 @@ public interface PaymentService {
 
     List<PayInfoDTO> findByDateOrderByRegDatePage(String startDate, String endDate, String memberNo, String cardNo, int page, int size);
 
-    List<MyStaticDTO> getPaymentDetails(String memberNo);
+    List<Map<String, MyStaticDTO>> getPaymentDetails(String memberNo);
 }

@@ -15,10 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -335,14 +332,17 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<MyStaticDTO> getPaymentDetails(String memberNo) {
+    public List<Map<String, MyStaticDTO>> getPaymentDetails(String memberNo) {
         // JPA 쿼리 실행
         List<Object[]> results = payInfoRepository.getPaymentDetails(memberNo);
 
         // DTO 리스트로 변환
-        List<MyStaticDTO> dtos = new ArrayList<>();
+//        List<MyStaticDTO> dtos = new ArrayList<>();
+
+        List<Map<String, MyStaticDTO>> dtos = new ArrayList<>();
 
         for (Object[] row : results) {
+            Map<String, MyStaticDTO> map = new HashMap<>();
             // 배열의 각 요소를 추출하여 DTO에 설정
             String franchiseCode = (String) row[0];
             Double thisMonth = ((Number) row[1]).doubleValue();
@@ -359,8 +359,10 @@ public class PaymentServiceImpl implements PaymentService {
                     .lastMonthTotal(lastMonthTotal)
                     .build();
 
-            // DTO를 리스트에 추가
-            dtos.add(dto);
+            map.put(franchiseCode, dto);
+
+            // List에 추가
+            dtos.add(map);
         }
 
         return dtos;
