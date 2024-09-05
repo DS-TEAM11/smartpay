@@ -29,4 +29,10 @@ public interface CardRepository extends JpaRepository<Card, String> {
         @Param("memberNo") String memberNo,
         @Param("cardNo") String cardNo
     );
+
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Card c SET c.cardNick = :newCardNick WHERE c.cardNo = :cardNo")
+    int updateCardNick(@Param("cardNo") String cardNo, @Param("newCardNick") String newCardNick);
 }
