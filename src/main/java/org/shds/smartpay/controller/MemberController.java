@@ -1,15 +1,23 @@
 package org.shds.smartpay.controller;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
-import lombok.extern.log4j.Log4j2;
+import java.lang.reflect.Member;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+import javax.smartcardio.Card;
+
 import org.shds.smartpay.dto.MemberDTO;
 import org.shds.smartpay.dto.PayInfoDTO;
-import org.shds.smartpay.entity.Card;
-import org.shds.smartpay.entity.Member;
+import org.shds.smartpay.entity.CardInfo;
+import org.shds.smartpay.repository.CardInfoRepository;
 import org.shds.smartpay.security.dto.MemberRegisterDTO;
 import org.shds.smartpay.service.CardService;
 import org.shds.smartpay.service.MemberService;
@@ -25,10 +33,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
+import lombok.extern.log4j.Log4j2;
 
 @Controller
 @Log4j2
@@ -47,6 +57,30 @@ public class MemberController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CardInfoRepository CardInfoRepository;
+    @Autowired
+    private CardInfoRepository cardInfoRepository;
+
+
+    public static class PayPwdRequest {
+        @Pattern(regexp = "^\\d{6}$", message = "비밀번호는 6자리 숫자여야 합니다.")
+        private String payPwd;
+        private String memberNo;
+
+        public String getPayPwd() {
+            return payPwd;
+        }
+
+        public String getMemberNo() {
+            return memberNo;
+        }
+
+        public void setPayPwd(String payPwd) {
+            this.payPwd = payPwd;
+        }
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<Member> registerMember(@RequestBody MemberRegisterDTO memberRegisterDTO) throws Exception {
@@ -131,8 +165,30 @@ public class MemberController {
                 // 카드에 총 결제금액을 추가
                 card.setTotalCardPrice(totalCardPrice);
 
+                Optional<CardInfo> cardInfo = cardInfoRepository.findByCardCode(card.getCardCode());
+
+                // Optional을 CardInfo로 변환
+                CardInfo info = cardInfo.orElseThrow(() -> new RuntimeException("CardInfo not found"));
+
+                // 카드 정보에 목표 실적 추가
+                Map<String, Object> cardData = new HashMap<>();
+                cardData.put("cardNo", card.getCardNo());
+                cardData.put("totalCardPrice", card.getTotalCardPrice());
+
+                // cardGoal1, cardGoal2, cardGoal3이 null이 아닌 경우만 추가
+                if (info.getCardGoal1() != null) {
+                    cardData.put("cardGoal1", info.getCardGoal1());
+                }
+                if (info.getCardGoal2() != null) {
+                    cardData.put("cardGoal2", info.getCardGoal2());
+                }
+                if (info.getCardGoal3() != null) {
+                    cardData.put("cardGoal3", info.getCardGoal3());
+                }
+
                 // 카드별로 필터링된 payInfoDTOs 리스트를 담아줌
                 response.put(card.getCardNo(), filteredPayInfoDTOs);
+                response.put("cardData_" + card.getCardNo(), cardData);
             }
 
             int totalSavePrice = allPayInfo.stream()
