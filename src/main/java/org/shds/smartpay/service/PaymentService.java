@@ -45,5 +45,5 @@ public interface PaymentService {
 
     List<PayInfoDTO> findByDateOrderByRegDatePage(String startDate, String endDate, String memberNo, String cardNo, int page, int size);
 
-    List<Map<String, MyStaticDTO>> getPaymentDetails(String memberNo);
+    Map<String, MyStaticDTO> getPaymentDetails(String memberNo);
 }
