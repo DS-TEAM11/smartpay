@@ -3,6 +3,7 @@ package org.shds.smartpay.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.shds.smartpay.dto.MyStaticDTO;
 import org.shds.smartpay.dto.PayDTO;
 import org.shds.smartpay.dto.PayInfoDTO;
 import org.shds.smartpay.entity.*;
@@ -333,6 +334,36 @@ public class PaymentServiceImpl implements PaymentService {
         return payInfoRepository.findByOrderNo(orderNo);
     }
 
+    @Override
+    public List<MyStaticDTO> getPaymentDetails(String memberNo) {
+        // JPA 쿼리 실행
+        List<Object[]> results = payInfoRepository.getPaymentDetails(memberNo);
 
+        // DTO 리스트로 변환
+        List<MyStaticDTO> dtos = new ArrayList<>();
+
+        for (Object[] row : results) {
+            // 배열의 각 요소를 추출하여 DTO에 설정
+            String franchiseCode = (String) row[0];
+            Double thisMonth = ((Number) row[1]).doubleValue();
+            Double lastMonth = ((Number) row[2]).doubleValue();
+            Double thisMonthTotal = ((Number) row[3]).doubleValue();
+            Double lastMonthTotal = ((Number) row[4]).doubleValue();
+
+            // DTO 객체 생성
+            MyStaticDTO dto = MyStaticDTO.builder()
+                    .franchiseCode(franchiseCode)
+                    .thisMonth(thisMonth)
+                    .lastMonth(lastMonth)
+                    .thisMonthTotal(thisMonthTotal)
+                    .lastMonthTotal(lastMonthTotal)
+                    .build();
+
+            // DTO를 리스트에 추가
+            dtos.add(dto);
+        }
+
+        return dtos;
+    }
 
 }

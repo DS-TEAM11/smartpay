@@ -108,12 +108,23 @@ public class PaymentController {
         , @RequestParam(required = false) String cardNo
 
         ) {
-        System.out.println("되나?");
         try {
             // payDate, memberNo, cardNo를 이용하여 최근 결제 내역 조회
             List<PayInfoDTO> payInfoDTOs = paymentService.findByDateOrderByRegDate(startDate, endDate, memberNo, cardNo);
-            System.out.println(payInfoDTOs);
             return ResponseEntity.ok(payInfoDTOs); // 조회된 결제 내역 반환
+        } catch (Exception e) {
+            // 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/statics")
+    public ResponseEntity<List<MyStaticDTO>> myStatic(
+        @RequestParam String memberNo
+    ) {
+        try {
+            List<MyStaticDTO> myStaticDTOs = paymentService.getPaymentDetails(memberNo);
+            return ResponseEntity.ok(myStaticDTOs); // 조회된 결제 내역 반환
         } catch (Exception e) {
             // 예외 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
