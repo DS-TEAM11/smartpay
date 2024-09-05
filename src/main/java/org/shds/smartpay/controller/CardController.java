@@ -9,12 +9,14 @@ import org.shds.smartpay.repository.CardInfoRepository;
 import org.shds.smartpay.repository.CardRepository;
 import org.shds.smartpay.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -155,6 +157,53 @@ public class CardController {
 
         return ResponseEntity.ok(cardDTOs);
     }
+
+    //카드 삭제하기 구현
+    @DeleteMapping("/{cardNo}")
+    public ResponseEntity<String> deleteCard(@PathVariable String cardNo) {
+        Optional<Card> cardOptional = cardRepository.findByCardNo(cardNo);
+        if (cardOptional.isPresent()) {
+            cardRepository.delete(cardOptional.get());
+            return ResponseEntity.ok("카드가 성공적으로 삭제되었습니다.");
+        } else {
+            return ResponseEntity.status(404).body("카드를 찾을 수 없습니다.");
+        }
+    }
+
+    //카드별칭 수정하기
+    @PostMapping("/updateNickname")
+    public ResponseEntity<String> updateCardNickname(@RequestBody Map<String, String> request) {
+        String cardNo = request.get("cardNo");  // 카드 번호
+        String newCardNick = request.get("newCardNick");  // 새로운 별칭
+
+        // 기존 카드 조회
+        Optional<Card> cardOptional = cardRepository.findByCardNo(cardNo);
+        if (cardOptional.isPresent()) {
+            Card card = cardOptional.get();
+
+            // 기존 카드의 값을 가져오고, 변경할 필드만 수정하여 새로운 카드 객체 생성
+            Card updatedCard = Card.builder()
+                    .cardNo(card.getCardNo())
+                    .cardNick(newCardNick)  // 새로운 별칭
+                    .cardName(card.getCardName())
+                    .isCredit(card.getIsCredit())
+                    .cardPwd(card.getCardPwd())
+                    .validPeriod(card.getValidPeriod())
+                    .regUser(card.getRegUser())
+                    .cardCode(card.getCardCode())
+                    .memberNo(card.getMemberNo())
+                    .cardImage(card.getCardImage())
+                    .build();
+
+            // 새로운 객체를 저장 (실제 업데이트)
+            cardRepository.save(updatedCard);
+
+            return ResponseEntity.ok("별칭이 성공적으로 수정되었습니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("카드를 찾을 수 없습니다.");
+        }
+    }
+
 
     @GetMapping("/details/byMember2")
     public ResponseEntity<List<Object>> getCardDetailsByMemberNo2(@RequestParam String memberNo) {
