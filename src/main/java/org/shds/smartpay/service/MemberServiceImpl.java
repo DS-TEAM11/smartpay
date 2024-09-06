@@ -57,6 +57,17 @@ public class MemberServiceImpl implements MemberService {
                 .map(member -> member.getPayPwd() == null || member.getPayPwd().isEmpty())
                 .orElse(false); // 멤버가 존재하지 않으면 false 반환
     }
+
+    @Override
+    public boolean isEmailDuplicate(String email) {
+        return memberRepository.findByEmail(email).isPresent();
+    }
+
+    @Override
+    public Member findByPhone(String phone) {
+        return memberRepository.findByPhone(phone).orElse(null);
+    }
+
     @Override
     public Member registerNewMember(MemberRegisterDTO memberRegisterDTO) throws Exception {
         if (memberRepository.findByEmail(memberRegisterDTO.getEmail()).isPresent()){
