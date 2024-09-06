@@ -83,7 +83,7 @@ public class CardController {
 
     // bin 조회하게 하기
     @GetMapping("/company")
-    public ResponseEntity<BinTableDTO> getCardCompany(@RequestParam String cardNumber) {
+    public ResponseEntity<Optional> getCardCompany(@RequestParam String cardNumber) {
         // 카드 번호의 길이 확인
         if (cardNumber.length() < 6) {
             return ResponseEntity.badRequest().body(null); // 잘못된 카드 번호 형식에 대한 응답
@@ -94,10 +94,10 @@ public class CardController {
 
         Optional<BinTableDTO> binInfo = cardService.getCardCompanyByBin(cardNumber);
         if (binInfo.isPresent()) {
-            return ResponseEntity.ok(binInfo.get());
+            return ResponseEntity.ok(binInfo);
         } else {
-            log.info("No company found for cardNumber: " + cardNumber); // 로깅
-            return ResponseEntity.status(404).body(null);  // 카드사가 없을 경우 404 반환
+            System.out.println("No company found for cardNumber: " + cardNumber); // 로깅
+            return ResponseEntity.badRequest().body(null); // 카드사가 없을 경우 404 반환
         }
     }
 
