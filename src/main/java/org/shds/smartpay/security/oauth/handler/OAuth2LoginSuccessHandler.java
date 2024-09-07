@@ -10,6 +10,7 @@ import org.shds.smartpay.entity.MemberRole;
 import org.shds.smartpay.repository.MemberRepository;
 import org.shds.smartpay.security.oauth.CustomOAuth2User;
 import org.shds.smartpay.security.service.JwtService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,9 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
+    @Value("${front_url}")
+    private String front_url;
+
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
 
@@ -82,7 +86,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         //response.sendRedirect("http://localhost:3000/Afterkakao");
 
         // 리다이렉트 - 쿼리 파라미터에 토큰 포함
-        String redirectUrl = String.format("http://localhost:3000/Afterkakao?accessToken=%s&refreshToken=%s",
+        String redirectUrl = String.format(front_url + "Afterkakao?accessToken=%s&refreshToken=%s",
                 "Bearer "+accessToken, "Bearer "+refreshToken);
         response.sendRedirect(redirectUrl);
     }
