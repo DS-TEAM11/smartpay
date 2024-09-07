@@ -10,7 +10,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    @Value("${front_url}")
+    @Value("${front.url}")
     private String front_url;
 
     //메세지브로커 등록

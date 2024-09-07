@@ -26,7 +26,7 @@ import java.util.UUID;
 @Log4j2
 @CrossOrigin(origins = "http://192.168.0.30:3000") // React 애플리케이션의 URL
 public class QrCodeController {
-    @Value("${front_url}")
+    @Value("${front.url}")
     private String front_url;
     /**
      * 판매자 사이트 QR생성
