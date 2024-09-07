@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class WebClientConfig {
-    @Value("${company_url}")
+    @Value("${company.url}")
     private String company_url;
 
     @Bean

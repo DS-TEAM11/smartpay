@@ -23,7 +23,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
-    @Value("${front_url}")
+    @Value("${front.url}")
     private String front_url;
 
     private final JwtService jwtService;

@@ -37,7 +37,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
-    @Value("${front_url}")
 
     private String front_url;
     private final LoginService loginService;
