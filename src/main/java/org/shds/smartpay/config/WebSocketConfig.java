@@ -34,7 +34,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // ws -> endpoint(요청이 들어오는 서버 클래스)
         registry.addEndpoint("/ws")
-                .setAllowedOrigins(front_url) //CORS (일단은 interceptor X)
+                .setAllowedOrigins("http://ec2-3-36-35-102.ap-northeast-2.compute.amazonaws.com:3000") //CORS (일단은 interceptor X)
                 .withSockJS();
     }
     //실제 경로는 /ws/topic/~
