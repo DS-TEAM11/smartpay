@@ -332,17 +332,17 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public List<Map<String, MyStaticDTO>> getPaymentDetails(String memberNo) {
+    public Map<String, MyStaticDTO> getPaymentDetails(String memberNo) {
         // JPA 쿼리 실행
         List<Object[]> results = payInfoRepository.getPaymentDetails(memberNo);
 
         // DTO 리스트로 변환
 //        List<MyStaticDTO> dtos = new ArrayList<>();
 
-        List<Map<String, MyStaticDTO>> dtos = new ArrayList<>();
+//        List<Map<String, MyStaticDTO>> dtos = new ArrayList<>();
 
+        Map<String, MyStaticDTO> map = new HashMap<>();
         for (Object[] row : results) {
-            Map<String, MyStaticDTO> map = new HashMap<>();
             // 배열의 각 요소를 추출하여 DTO에 설정
             String franchiseCode = (String) row[0];
             Double thisMonth = ((Number) row[1]).doubleValue();
@@ -361,11 +361,9 @@ public class PaymentServiceImpl implements PaymentService {
 
             map.put(franchiseCode, dto);
 
-            // List에 추가
-            dtos.add(map);
         }
 
-        return dtos;
+        return map;
     }
 
 }
