@@ -106,7 +106,7 @@ public class SecurityConfig {
 //        System.out.println("########### 여기서 걸린거임 ########");
 //        log.info("########### 여기서 걸린거임 ########");
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin(front_url); // React 앱의 주소
+        configuration.addAllowedOrigin("http://ec2-3-36-35-102.ap-northeast-2.compute.amazonaws.com:3000"); // React 앱의 주소
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("Origin");
         configuration.addAllowedHeader("X-Requested-With");
