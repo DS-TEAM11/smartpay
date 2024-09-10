@@ -2,6 +2,7 @@ package org.shds.smartpay.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.log4j.Log4j2;
 import org.shds.smartpay.repository.MemberRepository;
 import org.shds.smartpay.security.filter.CustomJsonUsernamePasswordAuthenticationFilter;
@@ -36,6 +37,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
+    @Value("${front_url}")
+
+    private String front_url;
     private final LoginService loginService;
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
@@ -103,7 +107,7 @@ public class SecurityConfig {
 //        System.out.println("########### 여기서 걸린거임 ########");
 //        log.info("########### 여기서 걸린거임 ########");
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000"); // React 앱의 주소
+        configuration.addAllowedOrigin(front_url); // React 앱의 주소
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("Origin");
         configuration.addAllowedHeader("X-Requested-With");

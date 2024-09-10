@@ -6,6 +6,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,8 @@ import java.util.UUID;
 @Log4j2
 @CrossOrigin(origins = "http://192.168.0.30:3000") // React 애플리케이션의 URL
 public class QrCodeController {
-
+    @Value("${front_url}")
+    private String front_url;
     /**
      * 판매자 사이트 QR생성
      * @return 판매자 사이트 url
@@ -34,7 +36,7 @@ public class QrCodeController {
     @GetMapping("/seller")
     public ResponseEntity<byte[]> sendSeller(@RequestParam String memberNo) throws Exception{
         //쿼리스트링으로 memberNo 받아서 처리하게 수정
-        String url = "http://localhost:3000/seller?memberNo=" + memberNo;
+        String url = front_url + "seller?memberNo=" + memberNo;
 
         // URL을 200x200 크기의 QR 코드로 인코딩하여 BitMatrix 객체로 반환
         BitMatrix encode = new MultiFormatWriter()

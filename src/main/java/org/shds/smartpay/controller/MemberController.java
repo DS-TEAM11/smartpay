@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @Controller
 @Log4j2
 @RequestMapping("/member/")
-@CrossOrigin(origins = {"http://localhost:3000/","http://localhost/"})
+@CrossOrigin(origins = {"http://localhost:3000/","http://localhost/", "http://52.79.97.126:8091"})
 public class MemberController {
 
     @Autowired
