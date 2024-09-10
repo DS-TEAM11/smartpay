@@ -16,6 +16,27 @@ public interface CardRepository extends JpaRepository<Card, String> {
     Optional<Card> findByCardNo(String cardNo);
     List<Card> findByMemberNo(String memberNo);
 
+    // memberNo로 pay_info에서 카드별 총 결제내역과 실적 1구간 조회
+    @Query(
+            value = """
+        select x.*, y.total_price, y.card_goal1
+        from card x
+        left join (
+            select a.card_no, sum(a.price) as total_price, a.card_code, b.card_goal1
+            from pay_info a
+            join card_info b
+            on a.card_code = b.card_code
+            where a.member_no = :memberNo
+                and a.pay_date BETWEEN DATE_FORMAT(CURDATE(), '%Y%m01') AND LAST_DAY(CURDATE())
+            group by a.card_no
+        ) y
+        on x.card_no = y.card_no
+        where x.member_no = :memberNo;
+        """,
+            nativeQuery = true
+    )
+    List<Object[]> findByMemberNoGroupByPayInfoAndCardGoal1(@Param("memberNo") String memberNo);
+
     @Transactional
     @Modifying // update
     @Query("""
@@ -24,10 +45,10 @@ public interface CardRepository extends JpaRepository<Card, String> {
         where c.memberNo = :memberNo and c.cardNo = :cardNo
     """)
     public int updateByBenefitPriorityAndUsagePriority(
-        @Param("benefitPriority") Integer benefitPriority,
-        @Param("usagePriority") Integer usagePriority,
-        @Param("memberNo") String memberNo,
-        @Param("cardNo") String cardNo
+            @Param("benefitPriority") Integer benefitPriority,
+            @Param("usagePriority") Integer usagePriority,
+            @Param("memberNo") String memberNo,
+            @Param("cardNo") String cardNo
     );
 
 

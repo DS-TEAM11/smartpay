@@ -30,4 +30,12 @@ public class CardRepositoryTests {
         System.out.println(updatedCard);
         System.out.println("#################################");
     }
+
+    @Test
+    public void findByMemberNoGroupByPayInfoAndCardGoal1() {
+        String memberNo = "test";
+        System.out.println("#################################");
+        System.out.println(cardRepository.findByMemberNoGroupByPayInfoAndCardGoal1(memberNo));
+        System.out.println("#################################");
+    }
 }
