@@ -11,6 +11,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +31,58 @@ public class ChatGptServiceImpl implements ChatGptService {
     private ChatClient chatClient;
 
     @Override
-    public CardRecommendDTO getCardBenefit(SellerDTO seller, String memberNo) {
+    public CardRecommendDTO getCardBenefit(SellerDTO seller, String memberNo, int aiMode) {
         //MemberNo를 통해 보유하고 있는 카드 리스트 받아오기
         List<String> cardList = new ArrayList<>();
-        for (Card c : cardRepository.findByMemberNo(memberNo)) {
-            cardList.add(c.getCardCode());
+
+        if (aiMode == 0) {
+            for (Card c : cardRepository.findByMemberNo(memberNo)) {
+                cardList.add(c.getCardCode());
+            }
+        } else if (aiMode == 1){
+            for (Object[] row : cardRepository.findByMemberNoGroupByPayInfoAndCardGoal1(memberNo)) {
+                System.out.println("=============================================");
+                System.out.println(row);
+                System.out.println(row[13]);
+                System.out.println(row[14]);
+                System.out.println("=============================================");
+
+                // totalPrice와 cardGoal1 값 가져오기 (정확한 타입으로 캐스팅)
+                Object totalPriceObj = row[13]; // total_price
+                Object cardGoal1Obj = row[14];  // card_goal1
+
+                Integer totalPrice = null;
+                Integer cardGoal1 = null;
+
+                if (totalPriceObj != null) {
+                    if (totalPriceObj instanceof Integer) {
+                        totalPrice = (Integer) totalPriceObj;
+                    } else if (totalPriceObj instanceof BigDecimal) {
+                        totalPrice = ((BigDecimal) totalPriceObj).intValue();
+                    }
+                }
+
+                if (cardGoal1Obj != null) {
+                    if (cardGoal1Obj instanceof Integer) {
+                        cardGoal1 = (Integer) cardGoal1Obj;
+                    } else if (cardGoal1Obj instanceof BigDecimal) {
+                        cardGoal1 = ((BigDecimal) cardGoal1Obj).intValue();
+                    }
+                }
+
+                // totalPrice와 cardGoal1이 null이 아닌 경우에만 비교
+                if (totalPrice != null && cardGoal1 != null && totalPrice < cardGoal1) {
+                    String cardCode = (String) row[7];
+                    System.out.println("=============================================");
+                    System.out.println(cardCode);
+                    System.out.println("=============================================");
+                    cardList.add(cardCode);  // 조건을 만족하는 카드만 리스트에 추가
+                }
+            }
+        } else if (aiMode == 2){
+            for (Card c : cardRepository.findByMemberNo(memberNo)) {
+                cardList.add(c.getCardCode());
+            }
         }
 //        System.out.println("카드리스트 조회 결과 ---------------");
 //        System.out.println(cardList.toString());
