@@ -38,8 +38,8 @@ public class PaymentController {
     }
 
     @PostMapping("/ai")
-    public ResponseEntity<Object> receivePaymentRequest(@RequestBody SellerDTO sellerDTO, @RequestParam String memberNo) {
-        CardRecommendDTO recommendDTO = chatGptService.getCardBenefit(sellerDTO, memberNo);
+    public ResponseEntity<Object> receivePaymentRequest(@RequestBody SellerDTO sellerDTO, @RequestParam String memberNo, @RequestParam int aiMode) {
+        CardRecommendDTO recommendDTO = chatGptService.getCardBenefit(sellerDTO, memberNo, aiMode);
         System.out.println(sellerDTO.toString());
         System.out.println(memberNo);
         if(recommendDTO == null) {
@@ -65,7 +65,10 @@ public class PaymentController {
                     return result; // 0: 승인 1: 정보 불일치 2: 유효기간 만료 3: 한도초과
                 })
                 .exceptionally(ex -> {
+                    System.out.println("+++++++++++++++++++++++++++++++++++++++++++++=");
+                    System.out.println(ex.getMessage());
                     log.error("Error occurred", ex);
+                    System.out.println("+++++++++++++++++++++++++++++++++++++++++++++=");
                     return -1;
 //                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
                 });
@@ -102,12 +105,12 @@ public class PaymentController {
 
     @GetMapping("/history")
     public ResponseEntity<List<PayInfoDTO>> history(
-        @RequestParam(required = false) String startDate
-        , @RequestParam(required = false) String endDate
-        , @RequestParam String memberNo
-        , @RequestParam(required = false) String cardNo
+            @RequestParam(required = false) String startDate
+            , @RequestParam(required = false) String endDate
+            , @RequestParam String memberNo
+            , @RequestParam(required = false) String cardNo
 
-        ) {
+    ) {
         try {
             // payDate, memberNo, cardNo를 이용하여 최근 결제 내역 조회
             List<PayInfoDTO> payInfoDTOs = paymentService.findByDateOrderByRegDate(startDate, endDate, memberNo, cardNo);
@@ -120,7 +123,7 @@ public class PaymentController {
 
     @GetMapping("/statics")
     public ResponseEntity<Map<String, MyStaticDTO>> myStatic(
-        @RequestParam String memberNo
+            @RequestParam String memberNo
     ) {
         try {
             Map<String, MyStaticDTO> myStaticDTOs = paymentService.getPaymentDetails(memberNo);
@@ -131,4 +134,3 @@ public class PaymentController {
         }
     }
 }
-

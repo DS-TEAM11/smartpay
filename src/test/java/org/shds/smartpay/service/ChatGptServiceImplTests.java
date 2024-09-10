@@ -19,6 +19,7 @@ public class ChatGptServiceImplTests {
         sellerDTO.setPurchasePrice(50000);
         sellerDTO.setPurchaseItems("돼지고기 3키로");
         String memberNo = "aaaaaa";
-        System.out.println(chatGptService.getCardBenefit(sellerDTO, memberNo).toString());
+        int aiMode = 0;
+        System.out.println(chatGptService.getCardBenefit(sellerDTO, memberNo, aiMode).toString());
     }
 }

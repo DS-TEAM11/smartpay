@@ -9,7 +9,7 @@ public class WebClientConfig {
     @Bean
     public WebClient companyAPI() {
         return WebClient.builder()
-                .baseUrl("http://localhost:8092") //카드사 서버
+                .baseUrl("http://52.79.43.173:8092") //카드사 서버
                 .build();
     }
 }
