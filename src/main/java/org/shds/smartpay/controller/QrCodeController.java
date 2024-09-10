@@ -36,7 +36,7 @@ public class QrCodeController {
     @GetMapping("/seller")
     public ResponseEntity<byte[]> sendSeller(@RequestParam String memberNo) throws Exception{
         //쿼리스트링으로 memberNo 받아서 처리하게 수정
-        String url = "http://ec2-3-36-35-102.ap-northeast-2.compute.amazonaws.com:3000seller?memberNo=" + memberNo;
+        String url = "http://ec2-3-36-35-102.ap-northeast-2.compute.amazonaws.com:3000/seller?memberNo=" + memberNo;
 
         // URL을 200x200 크기의 QR 코드로 인코딩하여 BitMatrix 객체로 반환
         BitMatrix encode = new MultiFormatWriter()
