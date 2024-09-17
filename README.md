@@ -51,7 +51,8 @@
 ## 2. 프로젝트 구조
 
 백앤드 - https://github.com/DS-TEAM11/smartpay  
-프론트앤드 - https://github.com/DS-TEAM11/front-smartpay
+프론트앤드 - https://github.com/DS-TEAM11/front-smartpay  
+카드사서버 - https://github.com/DS-TEAM11/company  
 
 
 ### (1) 폴더 구조
